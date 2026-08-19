@@ -312,6 +312,65 @@
             padding: 25px;
         }
 
+        /* ===== Saved Forms Table ===== */
+        .saved-forms-container {
+            margin-top: 15px;
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .saved-forms-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .saved-forms-table thead {
+            background: #1a2639;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .saved-forms-table th {
+            padding: 6px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 11px;
+        }
+        .saved-forms-table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid #e9ecef;
+            text-align: center;
+            font-size: 11px;
+        }
+        .saved-forms-table tbody tr:hover {
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+        .saved-forms-table .action-btn {
+            padding: 2px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            color: white;
+            margin: 0 2px;
+        }
+        .saved-forms-table .action-btn.view-btn {
+            background: #3b7cff;
+        }
+        .saved-forms-table .action-btn.print-btn {
+            background: #17a2b8;
+        }
+        .saved-forms-table .action-btn.delete-btn {
+            background: #dc3545;
+        }
+        .saved-forms-table .action-btn:hover {
+            opacity: 0.8;
+        }
+
         /* ===== Upload ===== */
         .upload-area {
             border: 2px dashed #dce3ec;
@@ -497,7 +556,6 @@
             width: 100%;
         }
 
-        /* ===== كل صفحة بحجم A4 ===== */
         .form-page {
             width: 210mm;
             min-height: 297mm;
@@ -703,10 +761,10 @@
         <div class="toolbar">
             <h1>📋 نظام استمارة العهدة</h1>
             <div class="actions">
-                <button class="btn btn-success" id="exportWordBtn">📄 تصدير Word</button>
+                <button class="btn btn-success" id="saveFormBtn">💾 حفظ الاستمارة</button>
                 <button class="btn btn-info" id="exportPdfBtn">📄 تصدير PDF</button>
                 <button class="btn btn-primary" id="previewFormBtn">👁️ معاينة</button>
-                <button class="btn btn-secondary" id="clearFormBtn">🔄 مسح</button>
+                <button class="btn btn-secondary" id="clearFormBtn">🔄 استمارة جديدة</button>
             </div>
         </div>
 
@@ -768,7 +826,7 @@
                     </div>
                     <div class="form-group">
                         <label>رقم الاستمارة <span class="en">Form ID</span></label>
-                        <input type="text" id="formId" value="ID2607011122" />
+                        <input type="text" id="formId" placeholder="يتولد تلقائياً" readonly style="background:#f0f2f5;" />
                     </div>
                 </div>
 
@@ -829,16 +887,46 @@
                 </div>
             </div>
 
-            <!-- ===== الجانب الأيمن: رفع الملفات ===== -->
+            <!-- ===== الجانب الأيمن: الاستمارات المحفوظة ===== -->
             <div class="card">
                 <div class="card-title">
-                    📂 رفع بيانات Excel
-                    <span class="badge">استيراد</span>
+                    📂 الاستمارات المحفوظة
+                    <span class="badge" id="savedCount">0</span>
                 </div>
 
-                <div style="margin-bottom:20px;">
+                <!-- ===== Search ===== -->
+                <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
+                    <input type="text" id="searchInput" placeholder="🔍 بحث برقم الاستمارة أو اسم المستلم..." style="flex:1; padding:8px 12px; border:2px solid #dce3ec; border-radius:8px; font-size:13px;" />
+                    <button class="btn btn-primary" id="searchBtn">🔍 بحث</button>
+                    <button class="btn btn-secondary" id="clearSearchBtn">✕ مسح</button>
+                </div>
+
+                <!-- ===== Saved Forms Table ===== -->
+                <div class="saved-forms-container">
+                    <table class="saved-forms-table">
+                        <thead>
+                            <tr>
+                                <th style="width:5%;">#</th>
+                                <th style="width:15%;">رقم الاستمارة</th>
+                                <th style="width:20%;">اسم المستلم</th>
+                                <th style="width:15%;">الجهة</th>
+                                <th style="width:10%;">عدد الأصناف</th>
+                                <th style="width:15%;">التاريخ</th>
+                                <th style="width:20%;">الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="savedFormsBody">
+                            <tr>
+                                <td colspan="7" class="empty-items">📭 لا توجد استمارات محفوظة</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ===== Upload ===== -->
+                <div style="margin-top:15px;">
                     <label style="font-weight:600;color:#1a2639;font-size:14px;display:block;margin-bottom:8px;">
-                        📋 بيانات صاحب العهدة
+                        📤 استيراد بيانات من Excel
                     </label>
                     <div class="upload-area" id="uploadCustodian">
                         <span class="upload-icon">📤</span>
@@ -849,9 +937,9 @@
                     <div class="upload-status" id="custodianFileStatus"></div>
                 </div>
 
-                <div style="margin-bottom:20px;">
+                <div style="margin-top:10px;">
                     <label style="font-weight:600;color:#1a2639;font-size:14px;display:block;margin-bottom:8px;">
-                        📦 بيانات الأصناف (كتالوج)
+                        📦 كتالوج الأصناف
                     </label>
                     <div class="upload-area" id="uploadItems">
                         <span class="upload-icon">📤</span>
@@ -860,22 +948,6 @@
                         <input type="file" id="itemsFile" accept=".xlsx,.xls" />
                     </div>
                     <div class="upload-status" id="itemsFileStatus"></div>
-                </div>
-
-                <div style="margin-top:15px;">
-                    <div style="font-weight:600;color:#1a2639;font-size:14px;margin-bottom:10px;">
-                        📊 معاينة البيانات المستوردة
-                    </div>
-                    <div class="preview-area" id="previewContainer">
-                        <div class="preview-title">📋 بيانات صاحب العهدة</div>
-                        <div id="custodianPreview" style="color:#666;padding:10px;background:white;border-radius:8px;">
-                            لم يتم رفع أي بيانات بعد
-                        </div>
-                        <div class="preview-title" style="margin-top:10px;">📦 بيانات الأصناف</div>
-                        <div id="itemsPreview" style="color:#666;padding:10px;background:white;border-radius:8px;">
-                            لم يتم رفع أي بيانات بعد
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -886,6 +958,9 @@
         <div class="preview-content">
             <button class="close-preview" id="closePreview">✕ إغلاق</button>
             <div id="previewFormContainer" class="form-preview-container"></div>
+            <div style="text-align:center;margin-top:15px;direction:ltr;">
+                <button onclick="window.print()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:8px;margin:0 5px;">🖨️ طباعة</button>
+            </div>
         </div>
     </div>
 
@@ -920,10 +995,17 @@
             const scannerStatusText = document.getElementById('scannerStatusText');
             const lastScanned = document.getElementById('lastScanned');
 
-            const exportWordBtn = document.getElementById('exportWordBtn');
+            const saveFormBtn = document.getElementById('saveFormBtn');
             const exportPdfBtn = document.getElementById('exportPdfBtn');
             const previewFormBtn = document.getElementById('previewFormBtn');
             const clearFormBtn = document.getElementById('clearFormBtn');
+
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+            const clearSearchBtn = document.getElementById('clearSearchBtn');
+            const savedFormsBody = document.getElementById('savedFormsBody');
+            const savedCount = document.getElementById('savedCount');
+
             const previewOverlay = document.getElementById('previewOverlay');
             const closePreview = document.getElementById('closePreview');
             const previewFormContainer = document.getElementById('previewFormContainer');
@@ -940,7 +1022,10 @@
             // ===== المتغيرات =====
             let items = [];
             let itemsCatalog = [];
+            let savedForms = [];
+            let currentViewForm = null;
             const ROWS_PER_PAGE = 5;
+            const STORAGE_KEY = 'CUSTODY_FORMS';
 
             // ===== Toast =====
             function showToast(message, type = 'success') {
@@ -1149,131 +1234,207 @@
             }
 
             // =============================================
-            // ===== رفع Excel =====
+            // ===== توليد رقم استمارة فريد =====
             // =============================================
 
-            function readExcelFile(file, callback) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' });
-                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                        callback(jsonData);
-                    } catch (err) {
-                        console.error('خطأ:', err);
-                        showToast('❌ خطأ في قراءة ملف Excel', 'error');
-                    }
-                };
-                reader.readAsArrayBuffer(file);
+            function generateFormId() {
+                const now = new Date();
+                const datePart = now.getFullYear().toString().slice(2) +
+                    String(now.getMonth() + 1).padStart(2, '0') +
+                    String(now.getDate()).padStart(2, '0');
+                const timePart = String(now.getHours()).padStart(2, '0') +
+                    String(now.getMinutes()).padStart(2, '0') +
+                    String(now.getSeconds()).padStart(2, '0');
+                const randomPart = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
+                return `ID${datePart}${timePart}${randomPart}`;
             }
 
-            uploadCustodian.addEventListener('click', () => custodianFile.click());
+            // =============================================
+            // ===== حفظ الاستمارة =====
+            // =============================================
 
-            custodianFile.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
+            function saveForm() {
+                if (items.length === 0) {
+                    showToast('⚠️ يجب إضافة صنف واحد على الأقل', 'warning');
+                    return;
+                }
 
-                readExcelFile(file, function(data) {
-                    if (data.length > 0) {
-                        const row = data[0];
-                        custodianName.value = row['اسم مستلم العهدة'] || row['Custodian Name'] || '';
-                        department.value = row['الجهة'] || row['Department'] || '';
-                        jobTitle.value = row['المسمى الوظيفي'] || row['Job Title'] || '';
-                        building.value = row['المبنى'] || row['Building'] || '';
-                        room.value = row['الغرفة'] || row['Room'] || '';
-                        floor.value = row['الدور'] || row['Floor'] || '';
-                        empNumber.value = row['الرقم الوظيفي'] || row['Emp. Number'] || '';
-                        civilId.value = row['الرقم المدني'] || row['Civil ID'] || '';
-                        phoneNo.value = row['رقم التليفون'] || row['Phone No.'] || '';
-                        formId.value = row['رقم الاستمارة'] || row['Form ID'] || 'ID2607011122';
+                const formData = {
+                    id: formId.value || generateFormId(),
+                    custodianName: custodianName.value || '',
+                    department: department.value || '',
+                    jobTitle: jobTitle.value || '',
+                    building: building.value || '',
+                    room: room.value || '',
+                    floor: floor.value || '',
+                    issueDate: issueDate.value || '',
+                    empNumber: empNumber.value || '',
+                    civilId: civilId.value || '',
+                    custodyType: custodyType.value || 'تنظيمية',
+                    phoneNo: phoneNo.value || '',
+                    items: JSON.parse(JSON.stringify(items)),
+                    timestamp: new Date().toISOString()
+                };
 
-                        if (row['نوع العهدة'] || row['Custody Type']) {
-                            const type = row['نوع العهدة'] || row['Custody Type'];
-                            custodyType.value = type.includes('تنظيمية') ? 'تنظيمية' : 'شخصية';
-                        }
-
-                        if (row['التاريخ'] || row['Date']) {
-                            const d = new Date(row['التاريخ'] || row['Date']);
-                            if (!isNaN(d)) issueDate.value = d.toISOString().split('T')[0];
-                        }
-
-                        let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 15px;font-size:12px;">';
-                        Object.keys(row).forEach(key => {
-                            html += `<div><strong>${key}:</strong></div><div>${row[key] || '-'}</div>`;
-                        });
-                        html += '</div>';
-                        custodianPreview.innerHTML = html;
-                        custodianFileStatus.textContent = `✅ تم رفع: ${file.name}`;
-                        custodianFileStatus.style.color = '#0f973d';
-                        showToast('✅ تم رفع بيانات صاحب العهدة', 'success');
+                // التحقق من عدم التكرار
+                const exists = savedForms.some(f => f.id === formData.id);
+                if (exists) {
+                    if (!confirm(`⚠️ استمارة برقم ${formData.id} موجودة بالفعل. هل تريد استبدالها؟`)) {
+                        return;
                     }
-                });
-            });
+                    savedForms = savedForms.filter(f => f.id !== formData.id);
+                }
 
-            uploadItems.addEventListener('click', () => itemsFile.click());
+                savedForms.push(formData);
+                saveToLocalStorage();
+                renderSavedForms();
+                showToast(`✅ تم حفظ الاستمارة رقم ${formData.id}`, 'success');
+                setStatus(`✅ تم حفظ الاستمارة ${formData.id}`, '#0f973d');
 
-            itemsFile.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
+                // تنظيف النموذج لاستمارة جديدة
+                clearFormData();
+            }
 
-                readExcelFile(file, function(data) {
-                    if (data.length > 0) {
-                        itemsCatalog = data.map(row => ({
-                            itemCode: String(row['رمز الصنف'] || row['Item Code'] || row['الأوريكال'] || '')
-                            .trim(),
-                            itemName: String(row['اسم الصنف'] || row['Item Name'] || row['الاسم'] || '')
-                            .trim(),
-                            modelNo: String(row['الموديل'] || row['Model No.'] || '').trim(),
-                            price: String(row['السعر'] || row['Price'] || row['دينار'] || '850').trim(),
-                            fils: String(row['فلس'] || row['Fils'] || '000').trim()
-                        })).filter(i => i.itemCode);
+            // =============================================
+            // ===== تحميل استمارة =====
+            // =============================================
 
-                        let html = `<table>
-                                <tr style="background:#e9ecef;">
-                                    <th style="padding:5px;border:1px solid #ddd;">رمز الصنف</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">اسم الصنف</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">الموديل</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">الدينار</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">فلس</th>
-                                </tr>`;
-                        itemsCatalog.slice(0, 10).forEach(item => {
-                            html += `<tr>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.itemCode}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.itemName}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.modelNo}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.price}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.fils}</td>
-                                </tr>`;
-                        });
-                        if (itemsCatalog.length > 10) {
-                            html +=
-                                `<tr><td colspan="5" style="padding:5px;text-align:center;color:#999;">... و ${itemsCatalog.length - 10} صنف إضافي</td></tr>`;
-                        }
-                        html += '</table>';
-                        itemsPreview.innerHTML = html;
-                        itemsFileStatus.textContent = `✅ تم رفع: ${file.name} (${itemsCatalog.length} صنف)`;
-                        itemsFileStatus.style.color = '#0f973d';
-                        showToast(`✅ تم رفع ${itemsCatalog.length} صنف`, 'success');
-                    }
-                });
-            });
+            function loadForm(formData) {
+                custodianName.value = formData.custodianName || '';
+                department.value = formData.department || '';
+                jobTitle.value = formData.jobTitle || '';
+                building.value = formData.building || '';
+                room.value = formData.room || '';
+                floor.value = formData.floor || '';
+                issueDate.value = formData.issueDate || '';
+                empNumber.value = formData.empNumber || '';
+                civilId.value = formData.civilId || '';
+                custodyType.value = formData.custodyType || 'تنظيمية';
+                phoneNo.value = formData.phoneNo || '';
+                formId.value = formData.id || '';
+
+                items = JSON.parse(JSON.stringify(formData.items || []));
+                renderItems();
+                focusItemCode();
+                showToast(`📂 تم تحميل الاستمارة رقم ${formData.id}`, 'success');
+                setStatus(`📂 تم تحميل الاستمارة ${formData.id}`, '#3b7cff');
+                // إغلاق المعاينة إذا كانت مفتوحة
+                previewOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // =============================================
+            // ===== حذف استمارة =====
+            // =============================================
+
+            function deleteForm(id) {
+                if (!confirm(`⚠️ هل أنت متأكد من حذف الاستمارة رقم ${id}؟`)) return;
+                savedForms = savedForms.filter(f => f.id !== id);
+                saveToLocalStorage();
+                renderSavedForms();
+                showToast(`🗑️ تم حذف الاستمارة ${id}`, 'error');
+            }
+
+            // =============================================
+            // ===== عرض استمارة (معاينة) =====
+            // =============================================
+
+            function viewForm(formData) {
+                currentViewForm = formData;
+                // تعبئة البيانات المؤقتة للمعاينة
+                const tempItems = items;
+                items = JSON.parse(JSON.stringify(formData.items || []));
+                const htmlContent = generateFormHTML(formData);
+                items = tempItems;
+                previewFormContainer.innerHTML = htmlContent;
+                previewOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // =============================================
+            // ===== طباعة استمارة =====
+            // =============================================
+
+            function printForm(formData) {
+                const htmlContent = generateFormHTML(formData);
+                const printWindow = window.open('', '_blank', 'width=1100,height=800');
+                if (!printWindow) {
+                    showToast('⚠️ يرجى السماح بالنوافذ المنبثقة', 'warning');
+                    return;
+                }
+
+                const fullHtml = `
+                        <!DOCTYPE html>
+                        <html dir="rtl">
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>استمارة عهدة - ${formData.id}</title>
+                            <style>
+                                * { margin: 0; padding: 0; box-sizing: border-box; }
+                                body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 0; background: white; direction: rtl; }
+                                .form-page { width: 210mm; min-height: 297mm; padding: 8mm 6mm; margin: 0 auto; display: flex; flex-direction: column; background: white; }
+                                .page-header { flex-shrink: 0; }
+                                .page-body { flex: 1; overflow: visible; }
+                                .page-footer { flex-shrink: 0; margin-top: auto; }
+                                .form-id { text-align: left; font-size: 15px; color: #333; margin-bottom: 4px; font-weight: 600; font-family: 'Courier New', monospace; }
+                                .form-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 14px; border-bottom: 3px solid #1a2639; padding-bottom: 10px; }
+                                .form-title .en { font-weight: 400; font-size: 18px; color: #555; }
+                                table { width: 100%; border-collapse: collapse; margin: 0; }
+                                td, th { border: 2px solid #000; padding: 5px 7px; text-align: center; vertical-align: middle; }
+                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 12px; white-space: nowrap; padding: 4px 6px; }
+                                .data-cell { text-align: center; font-size: 12px; padding: 4px 6px; font-weight: 500; }
+                                .en-text { font-weight: 400; color: #666; font-size: 9px; }
+                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 11px; padding: 4px 6px; border: 2px solid #000; }
+                                .items-table td { font-size: 11px; padding: 4px 6px; border: 2px solid #000; font-weight: 500; }
+                                .signature-cell { height: 70px; vertical-align: middle; padding: 5px 6px; font-size: 11px; border: 2px solid #000; }
+                                .signature-cell strong { font-size: 12px; display: block; margin-bottom: 2px; }
+                                .signature-cell .sig-line-en { font-size: 9px; color: #888; display: block; margin-bottom: 1px; }
+                                .sig-row { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 3px; font-size: 11px; color: #333; }
+                                .sig-row .label-text { white-space: nowrap; font-weight: 500; font-size: 11px; min-width: 75px; text-align: right; }
+                                .sig-dotted-short { display: inline-block; min-width: 90px; border-bottom: 2px dotted #999; padding: 0 3px; min-height: 18px; flex: 1; }
+                                .custody-type { font-weight: 700; color: #1a2639; }
+                                .table-gap { margin-top: 6px; }
+                                .table-gap-bottom { margin-top: 8px; }
+                                @media print {
+                                    .form-page { margin: 0; page-break-after: always; width: 100%; min-height: 100vh; }
+                                    .form-page:last-child { page-break-after: avoid; }
+                                    .no-print { display: none !important; }
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="form-preview-container" style="padding:0;">
+                                ${htmlContent}
+                            </div>
+                            <div class="no-print" style="text-align:center;margin-top:15px;direction:ltr;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a2639;padding:10px 20px;border-radius:10px;z-index:999;">
+                                <button onclick="window.print()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:8px;margin:0 5px;">🖨️ طباعة</button>
+                                <button onclick="window.close()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#dc3545;color:white;border-radius:8px;margin:0 5px;">✕ إغلاق</button>
+                            </div>
+                        </body>
+                        </html>
+                    `;
+
+                printWindow.document.write(fullHtml);
+                printWindow.document.close();
+
+                setTimeout(() => {
+                    printWindow.print();
+                }, 600);
+            }
 
             // =============================================
             // ===== توليد نموذج الاستمارة =====
             // =============================================
 
-            function generateFormHTML() {
-                const now = new Date();
-                const dateStr = issueDate.value ? new Date(issueDate.value).toLocaleDateString('ar-EG') : now
-                .toLocaleDateString('ar-EG');
-                const formIdVal = formId.value || 'ID2607011122';
+            function generateFormHTML(formData) {
+                const dateStr = formData.issueDate ? new Date(formData.issueDate).toLocaleDateString('ar-EG') : new Date()
+                    .toLocaleDateString('ar-EG');
+                const formIdVal = formData.id || 'ID2607011122';
+                const formItems = formData.items || [];
 
-                const totalItems = items.length;
+                const totalItems = formItems.length;
                 const totalPages = Math.max(1, Math.ceil(totalItems / ROWS_PER_PAGE));
 
-                // ===== إنشاء رأس الصفحة =====
                 function generatePageHeader() {
                     return `
                             <div class="page-header">
@@ -1288,31 +1449,31 @@
                                 <table>
                                     <tr>
                                         <td class="label-cell" style="width:11%;">اسم مستلم العهدة<br/><span class="en-text">English Name</span></td>
-                                        <td class="data-cell" style="width:14%;">${custodianName.value || '.........................'}</td>
+                                        <td class="data-cell" style="width:14%;">${formData.custodianName || '.........................'}</td>
                                         <td class="label-cell" style="width:9%;">الجهة<br/><span class="en-text">Dep</span></td>
-                                        <td class="data-cell" style="width:14%;">${department.value || '.........................'}</td>
+                                        <td class="data-cell" style="width:14%;">${formData.department || '.........................'}</td>
                                         <td class="label-cell" style="width:10%;">المسمى الوظيفي<br/><span class="en-text">Job title</span></td>
-                                        <td class="data-cell" style="width:14%;">${jobTitle.value || '.........................'}</td>
+                                        <td class="data-cell" style="width:14%;">${formData.jobTitle || '.........................'}</td>
                                         <td class="label-cell" style="width:7%;">المبنى<br/><span class="en-text">Building</span></td>
-                                        <td class="data-cell" style="width:7%;">${building.value || '....'}</td>
+                                        <td class="data-cell" style="width:7%;">${formData.building || '....'}</td>
                                     </tr>
                                     <tr>
                                         <td class="label-cell">الغرفة<br/><span class="en-text">/Room</span></td>
-                                        <td class="data-cell">${room.value || '....'}</td>
+                                        <td class="data-cell">${formData.room || '....'}</td>
                                         <td class="label-cell">الدور<br/><span class="en-text">/Floor</span></td>
-                                        <td class="data-cell">${floor.value || '....'}</td>
+                                        <td class="data-cell">${formData.floor || '....'}</td>
                                         <td class="label-cell">التاريخ<br/><span class="en-text">Date</span></td>
                                         <td class="data-cell">${dateStr}</td>
                                         <td class="label-cell">الرقم الوظيفي<br/><span class="en-text">Emp. Number</span></td>
-                                        <td class="data-cell">${empNumber.value || '.........................'}</td>
+                                        <td class="data-cell">${formData.empNumber || '.........................'}</td>
                                     </tr>
                                     <tr>
                                         <td class="label-cell">الرقم المدني<br/><span class="en-text">Civil ID</span></td>
-                                        <td class="data-cell">${civilId.value || '.........................'}</td>
+                                        <td class="data-cell">${formData.civilId || '.........................'}</td>
                                         <td class="label-cell">نوع العهدة:<br/><span class="en-text">Custody Type</span></td>
-                                        <td class="data-cell custody-type">${custodyType.value || 'تنظيمية'}</td>
+                                        <td class="data-cell custody-type">${formData.custodyType || 'تنظيمية'}</td>
                                         <td class="label-cell">رقم التليفون<br/><span class="en-text">Phone No.</span></td>
-                                        <td class="data-cell" colspan="3">${phoneNo.value || '.........................'}</td>
+                                        <td class="data-cell" colspan="3">${formData.phoneNo || '.........................'}</td>
                                     </tr>
                                 </table>
 
@@ -1321,7 +1482,6 @@
                         `;
                 }
 
-                // ===== إنشاء تذييل الصفحة =====
                 function generatePageFooter() {
                     return `
                             <div class="page-footer">
@@ -1383,10 +1543,9 @@
                         `;
                 }
 
-                // ===== إنشاء جدول الأصناف =====
                 function generateItemsTable(startIndex, endIndex) {
                     let itemsHtml = '';
-                    const pageItems = items.slice(startIndex, endIndex);
+                    const pageItems = formItems.slice(startIndex, endIndex);
 
                     if (pageItems.length === 0) {
                         itemsHtml =
@@ -1436,7 +1595,6 @@
                         `;
                 }
 
-                // ===== بناء الصفحات =====
                 let pagesHtml = '';
 
                 if (totalItems === 0) {
@@ -1466,20 +1624,304 @@
             }
 
             // =============================================
-            // ===== معاينة الاستمارة =====
+            // ===== عرض الاستمارات المحفوظة =====
             // =============================================
 
-            function previewForm() {
+            function renderSavedForms(filter = '') {
+                let filtered = savedForms;
+                if (filter.trim()) {
+                    const f = filter.trim().toLowerCase();
+                    filtered = savedForms.filter(form =>
+                        form.id.toLowerCase().includes(f) ||
+                        (form.custodianName || '').toLowerCase().includes(f)
+                    );
+                }
+
+                if (filtered.length === 0) {
+                    savedFormsBody.innerHTML = `
+                            <tr>
+                                <td colspan="7" class="empty-items">${savedForms.length === 0 ? '📭 لا توجد استمارات محفوظة' : '🔍 لا توجد نتائج مطابقة'}</td>
+                            </tr>
+                        `;
+                    savedCount.textContent = savedForms.length;
+                    return;
+                }
+
+                let html = '';
+                filtered.forEach((form, index) => {
+                    const itemCount = (form.items || []).length;
+                    const date = form.issueDate ? new Date(form.issueDate).toLocaleDateString('ar-EG') : '-';
+                    html += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><strong>${form.id}</strong></td>
+                                <td>${form.custodianName || '-'}</td>
+                                <td>${form.department || '-'}</td>
+                                <td>${itemCount}</td>
+                                <td>${date}</td>
+                                <td>
+                                    <button class="action-btn view-btn" onclick="window.viewSavedForm('${form.id}')">👁️</button>
+                                    <button class="action-btn print-btn" onclick="window.printSavedForm('${form.id}')">🖨️</button>
+                                    <button class="action-btn delete-btn" onclick="window.deleteSavedForm('${form.id}')">✕</button>
+                                </td>
+                            </tr>
+                        `;
+                });
+                savedFormsBody.innerHTML = html;
+                savedCount.textContent = savedForms.length;
+            }
+
+            // =============================================
+            // ===== LocalStorage =====
+            // =============================================
+
+            function saveToLocalStorage() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(savedForms));
+                } catch (e) {
+                    console.error('خطأ في حفظ البيانات:', e);
+                    showToast('❌ فشل حفظ البيانات', 'error');
+                }
+            }
+
+            function loadFromLocalStorage() {
+                try {
+                    const data = localStorage.getItem(STORAGE_KEY);
+                    if (data) {
+                        savedForms = JSON.parse(data);
+                    }
+                } catch (e) {
+                    console.error('خطأ في تحميل البيانات:', e);
+                    savedForms = [];
+                }
+                renderSavedForms();
+            }
+
+            // =============================================
+            // ===== رفع Excel =====
+            // =============================================
+
+            function readExcelFile(file, callback) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                        callback(jsonData);
+                    } catch (err) {
+                        console.error('خطأ:', err);
+                        showToast('❌ خطأ في قراءة ملف Excel', 'error');
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+
+            uploadCustodian.addEventListener('click', () => custodianFile.click());
+
+            custodianFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                readExcelFile(file, function(data) {
+                    if (data.length > 0) {
+                        const row = data[0];
+                        custodianName.value = row['اسم مستلم العهدة'] || row['Custodian Name'] || '';
+                        department.value = row['الجهة'] || row['Department'] || '';
+                        jobTitle.value = row['المسمى الوظيفي'] || row['Job Title'] || '';
+                        building.value = row['المبنى'] || row['Building'] || '';
+                        room.value = row['الغرفة'] || row['Room'] || '';
+                        floor.value = row['الدور'] || row['Floor'] || '';
+                        empNumber.value = row['الرقم الوظيفي'] || row['Emp. Number'] || '';
+                        civilId.value = row['الرقم المدني'] || row['Civil ID'] || '';
+                        phoneNo.value = row['رقم التليفون'] || row['Phone No.'] || '';
+                        formId.value = row['رقم الاستمارة'] || row['Form ID'] || generateFormId();
+
+                        if (row['نوع العهدة'] || row['Custody Type']) {
+                            const type = row['نوع العهدة'] || row['Custody Type'];
+                            custodyType.value = type.includes('تنظيمية') ? 'تنظيمية' : 'شخصية';
+                        }
+
+                        if (row['التاريخ'] || row['Date']) {
+                            const d = new Date(row['التاريخ'] || row['Date']);
+                            if (!isNaN(d)) issueDate.value = d.toISOString().split('T')[0];
+                        }
+
+                        let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 15px;font-size:12px;">';
+                        Object.keys(row).forEach(key => {
+                            html += `<div><strong>${key}:</strong></div><div>${row[key] || '-'}</div>`;
+                        });
+                        html += '</div>';
+                        document.getElementById('custodianPreview').innerHTML = html;
+                        custodianFileStatus.textContent = `✅ تم رفع: ${file.name}`;
+                        custodianFileStatus.style.color = '#0f973d';
+                        showToast('✅ تم رفع بيانات صاحب العهدة', 'success');
+                    }
+                });
+            });
+
+            uploadItems.addEventListener('click', () => itemsFile.click());
+
+            itemsFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                readExcelFile(file, function(data) {
+                    if (data.length > 0) {
+                        itemsCatalog = data.map(row => ({
+                            itemCode: String(row['رمز الصنف'] || row['Item Code'] || row['الأوريكال'] || '')
+                            .trim(),
+                            itemName: String(row['اسم الصنف'] || row['Item Name'] || row['الاسم'] || '')
+                            .trim(),
+                            modelNo: String(row['الموديل'] || row['Model No.'] || '').trim(),
+                            price: String(row['السعر'] || row['Price'] || row['دينار'] || '850').trim(),
+                            fils: String(row['فلس'] || row['Fils'] || '000').trim()
+                        })).filter(i => i.itemCode);
+
+                        let html = `<table>
+                                <tr style="background:#e9ecef;">
+                                    <th style="padding:5px;border:1px solid #ddd;">رمز الصنف</th>
+                                    <th style="padding:5px;border:1px solid #ddd;">اسم الصنف</th>
+                                    <th style="padding:5px;border:1px solid #ddd;">الموديل</th>
+                                    <th style="padding:5px;border:1px solid #ddd;">الدينار</th>
+                                    <th style="padding:5px;border:1px solid #ddd;">فلس</th>
+                                </tr>`;
+                        itemsCatalog.slice(0, 10).forEach(item => {
+                            html += `<tr>
+                                    <td style="padding:5px;border:1px solid #ddd;">${item.itemCode}</td>
+                                    <td style="padding:5px;border:1px solid #ddd;">${item.itemName}</td>
+                                    <td style="padding:5px;border:1px solid #ddd;">${item.modelNo}</td>
+                                    <td style="padding:5px;border:1px solid #ddd;">${item.price}</td>
+                                    <td style="padding:5px;border:1px solid #ddd;">${item.fils}</td>
+                                </tr>`;
+                        });
+                        if (itemsCatalog.length > 10) {
+                            html +=
+                                `<tr><td colspan="5" style="padding:5px;text-align:center;color:#999;">... و ${itemsCatalog.length - 10} صنف إضافي</td></tr>`;
+                        }
+                        html += '</table>';
+                        document.getElementById('itemsPreview').innerHTML = html;
+                        itemsFileStatus.textContent = `✅ تم رفع: ${file.name} (${itemsCatalog.length} صنف)`;
+                        itemsFileStatus.style.color = '#0f973d';
+                        showToast(`✅ تم رفع ${itemsCatalog.length} صنف`, 'success');
+                    }
+                });
+            });
+
+            // =============================================
+            // ===== دوال عامة =====
+            // =============================================
+
+            window.viewSavedForm = function(id) {
+                const form = savedForms.find(f => f.id === id);
+                if (form) viewForm(form);
+            };
+
+            window.printSavedForm = function(id) {
+                const form = savedForms.find(f => f.id === id);
+                if (form) printForm(form);
+            };
+
+            window.deleteSavedForm = function(id) {
+                deleteForm(id);
+            };
+
+            // =============================================
+            // ===== مسح بيانات النموذج =====
+            // =============================================
+
+            function clearFormData() {
+                custodianName.value = '';
+                department.value = '';
+                jobTitle.value = '';
+                building.value = '';
+                room.value = '';
+                floor.value = '';
+                empNumber.value = '';
+                civilId.value = '';
+                phoneNo.value = '';
+                custodyType.value = 'تنظيمية';
+                formId.value = generateFormId();
+                const today = new Date();
+                issueDate.value = today.toISOString().split('T')[0];
+                items = [];
+                renderItems();
+                focusItemCode();
+                setStatus('🔄 استمارة جديدة جاهزة', '#1a2639');
+            }
+
+            // =============================================
+            // ===== البحث =====
+            // =============================================
+
+            function searchForms() {
+                const query = searchInput.value.trim();
+                renderSavedForms(query);
+            }
+
+            function clearSearch() {
+                searchInput.value = '';
+                renderSavedForms('');
+            }
+
+            // =============================================
+            // ===== ربط الأحداث =====
+            // =============================================
+
+            addItemBtn.addEventListener('click', addItem);
+            saveFormBtn.addEventListener('click', saveForm);
+            exportPdfBtn.addEventListener('click', () => {
                 if (items.length === 0) {
                     showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
                     return;
                 }
+                const formData = {
+                    id: formId.value || generateFormId(),
+                    custodianName: custodianName.value || '',
+                    department: department.value || '',
+                    jobTitle: jobTitle.value || '',
+                    building: building.value || '',
+                    room: room.value || '',
+                    floor: floor.value || '',
+                    issueDate: issueDate.value || '',
+                    empNumber: empNumber.value || '',
+                    civilId: civilId.value || '',
+                    custodyType: custodyType.value || 'تنظيمية',
+                    phoneNo: phoneNo.value || '',
+                    items: JSON.parse(JSON.stringify(items))
+                };
+                printForm(formData);
+            });
+            previewFormBtn.addEventListener('click', () => {
+                if (items.length === 0) {
+                    showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
+                    return;
+                }
+                const formData = {
+                    id: formId.value || generateFormId(),
+                    custodianName: custodianName.value || '',
+                    department: department.value || '',
+                    jobTitle: jobTitle.value || '',
+                    building: building.value || '',
+                    room: room.value || '',
+                    floor: floor.value || '',
+                    issueDate: issueDate.value || '',
+                    empNumber: empNumber.value || '',
+                    civilId: civilId.value || '',
+                    custodyType: custodyType.value || 'تنظيمية',
+                    phoneNo: phoneNo.value || '',
+                    items: JSON.parse(JSON.stringify(items))
+                };
+                viewForm(formData);
+            });
+            clearFormBtn.addEventListener('click', clearFormData);
 
-                const htmlContent = generateFormHTML();
-                previewFormContainer.innerHTML = htmlContent;
-                previewOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+            searchBtn.addEventListener('click', searchForms);
+            clearSearchBtn.addEventListener('click', clearSearch);
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') searchForms();
+            });
 
             closePreview.addEventListener('click', function() {
                 previewOverlay.classList.remove('active');
@@ -1492,200 +1934,6 @@
                     document.body.style.overflow = '';
                 }
             });
-
-            // =============================================
-            // ===== تصدير Word =====
-            // =============================================
-
-            function exportWord() {
-                if (items.length === 0) {
-                    showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
-                    return;
-                }
-
-                const htmlContent = generateFormHTML();
-                const fullHtml = `
-                        <!DOCTYPE html>
-                        <html dir="rtl">
-                        <head>
-                            <meta charset="UTF-8">
-                            <title>استمارة عهدة - ${formId.value}</title>
-                            <style>
-                                * { margin: 0; padding: 0; box-sizing: border-box; }
-                                body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 0; background: white; direction: rtl; }
-                                .form-page {
-                                    width: 210mm;
-                                    min-height: 297mm;
-                                    padding: 8mm 6mm;
-                                    margin: 0 auto;
-                                    page-break-after: always;
-                                    display: flex;
-                                    flex-direction: column;
-                                    background: white;
-                                }
-                                .form-page:last-child { page-break-after: avoid; }
-                                .page-header { flex-shrink: 0; }
-                                .page-body { flex: 1; overflow: visible; }
-                                .page-footer { flex-shrink: 0; margin-top: auto; }
-                                .form-id { text-align: left; font-size: 15px; color: #333; margin-bottom: 4px; font-weight: 600; font-family: 'Courier New', monospace; }
-                                .form-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 14px; border-bottom: 3px solid #1a2639; padding-bottom: 10px; }
-                                .form-title .en { font-weight: 400; font-size: 18px; color: #555; }
-                                table { width: 100%; border-collapse: collapse; margin: 0; }
-                                td, th { border: 2px solid #000; padding: 5px 7px; text-align: center; vertical-align: middle; }
-                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 12px; white-space: nowrap; padding: 4px 6px; }
-                                .data-cell { text-align: center; font-size: 12px; padding: 4px 6px; font-weight: 500; }
-                                .en-text { font-weight: 400; color: #666; font-size: 9px; }
-                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 11px; padding: 4px 6px; border: 2px solid #000; }
-                                .items-table td { font-size: 11px; padding: 4px 6px; border: 2px solid #000; font-weight: 500; }
-                                .signature-cell { height: 70px; vertical-align: middle; padding: 5px 6px; font-size: 11px; border: 2px solid #000; }
-                                .signature-cell strong { font-size: 12px; display: block; margin-bottom: 2px; }
-                                .signature-cell .sig-line-en { font-size: 9px; color: #888; display: block; margin-bottom: 1px; }
-                                .sig-row { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 3px; font-size: 11px; color: #333; }
-                                .sig-row .label-text { white-space: nowrap; font-weight: 500; font-size: 11px; min-width: 75px; text-align: right; }
-                                .sig-dotted-short { display: inline-block; min-width: 90px; border-bottom: 2px dotted #999; padding: 0 3px; min-height: 18px; flex: 1; }
-                                .custody-type { font-weight: 700; color: #1a2639; }
-                                .table-gap { margin-top: 6px; }
-                                .table-gap-bottom { margin-top: 8px; }
-                                @media print {
-                                    .form-page { margin: 0; }
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="form-preview-container" style="padding:0;">
-                                ${htmlContent}
-                            </div>
-                        </body>
-                        </html>
-                    `;
-
-                const blob = new Blob([fullHtml], { type: 'application/msword;charset=utf-8' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = `استمارة_عهدة_${formId.value || 'new'}.doc`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(link.href);
-                showToast('📄 تم تصدير ملف Word بنجاح', 'success');
-            }
-
-            // =============================================
-            // ===== تصدير PDF (طباعة) =====
-            // =============================================
-
-            function exportPDF() {
-                if (items.length === 0) {
-                    showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
-                    return;
-                }
-
-                const htmlContent = generateFormHTML();
-                const printWindow = window.open('', '_blank', 'width=1100,height=800');
-                if (!printWindow) {
-                    showToast('⚠️ يرجى السماح بالنوافذ المنبثقة', 'warning');
-                    return;
-                }
-
-                const fullHtml = `
-                        <!DOCTYPE html>
-                        <html dir="rtl">
-                        <head>
-                            <meta charset="UTF-8">
-                            <title>استمارة عهدة - ${formId.value}</title>
-                            <style>
-                                * { margin: 0; padding: 0; box-sizing: border-box; }
-                                body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 0; background: white; direction: rtl; }
-                                .form-page {
-                                    width: 210mm;
-                                    min-height: 297mm;
-                                    padding: 8mm 6mm;
-                                    margin: 0 auto;
-                                    page-break-after: always;
-                                    display: flex;
-                                    flex-direction: column;
-                                    background: white;
-                                }
-                                .form-page:last-child { page-break-after: avoid; }
-                                .page-header { flex-shrink: 0; }
-                                .page-body { flex: 1; overflow: visible; }
-                                .page-footer { flex-shrink: 0; margin-top: auto; }
-                                .form-id { text-align: left; font-size: 15px; color: #333; margin-bottom: 4px; font-weight: 600; font-family: 'Courier New', monospace; }
-                                .form-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 14px; border-bottom: 3px solid #1a2639; padding-bottom: 10px; }
-                                .form-title .en { font-weight: 400; font-size: 18px; color: #555; }
-                                table { width: 100%; border-collapse: collapse; margin: 0; }
-                                td, th { border: 2px solid #000; padding: 5px 7px; text-align: center; vertical-align: middle; }
-                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 12px; white-space: nowrap; padding: 4px 6px; }
-                                .data-cell { text-align: center; font-size: 12px; padding: 4px 6px; font-weight: 500; }
-                                .en-text { font-weight: 400; color: #666; font-size: 9px; }
-                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 11px; padding: 4px 6px; border: 2px solid #000; }
-                                .items-table td { font-size: 11px; padding: 4px 6px; border: 2px solid #000; font-weight: 500; }
-                                .signature-cell { height: 70px; vertical-align: middle; padding: 5px 6px; font-size: 11px; border: 2px solid #000; }
-                                .signature-cell strong { font-size: 12px; display: block; margin-bottom: 2px; }
-                                .signature-cell .sig-line-en { font-size: 9px; color: #888; display: block; margin-bottom: 1px; }
-                                .sig-row { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 3px; font-size: 11px; color: #333; }
-                                .sig-row .label-text { white-space: nowrap; font-weight: 500; font-size: 11px; min-width: 75px; text-align: right; }
-                                .sig-dotted-short { display: inline-block; min-width: 90px; border-bottom: 2px dotted #999; padding: 0 3px; min-height: 18px; flex: 1; }
-                                .custody-type { font-weight: 700; color: #1a2639; }
-                                .table-gap { margin-top: 6px; }
-                                .table-gap-bottom { margin-top: 8px; }
-                                @media print {
-                                    body { padding: 0; margin: 0; }
-                                    .form-page { margin: 0; page-break-after: always; width: 100%; min-height: 100vh; }
-                                    .form-page:last-child { page-break-after: avoid; }
-                                    .no-print { display: none !important; }
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="form-preview-container" style="padding:0;">
-                                ${htmlContent}
-                            </div>
-                            <div class="no-print" style="text-align:center;margin-top:15px;direction:ltr;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a2639;padding:10px 20px;border-radius:10px;z-index:999;">
-                                <button onclick="window.print()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:8px;margin:0 5px;">🖨️ طباعة</button>
-                                <button onclick="window.close()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#dc3545;color:white;border-radius:8px;margin:0 5px;">✕ إغلاق</button>
-                            </div>
-                        </body>
-                        </html>
-                    `;
-
-                printWindow.document.write(fullHtml);
-                printWindow.document.close();
-
-                setTimeout(() => {
-                    printWindow.print();
-                    showToast('📄 تم فتح النموذج للطباعة', 'success');
-                }, 600);
-            }
-
-            // =============================================
-            // ===== مسح النموذج =====
-            // =============================================
-
-            function clearForm() {
-                if (items.length > 0) {
-                    if (!confirm('⚠️ سيتم مسح جميع الأصناف. هل أنت متأكد؟')) return;
-                }
-
-                items = [];
-                renderItems();
-                itemCodeInput.value = '';
-                serialInput.value = '';
-                serialInput.disabled = true;
-                focusItemCode();
-                setStatus('🔄 تم مسح الأصناف', '#1a2639');
-                showToast('🔄 تم مسح الأصناف', 'success');
-            }
-
-            // =============================================
-            // ===== ربط الأحداث =====
-            // =============================================
-
-            addItemBtn.addEventListener('click', addItem);
-            exportWordBtn.addEventListener('click', exportWord);
-            exportPdfBtn.addEventListener('click', exportPDF);
-            previewFormBtn.addEventListener('click', previewForm);
-            clearFormBtn.addEventListener('click', clearForm);
 
             // Enter على الأوريكال
             itemCodeInput.addEventListener('keydown', function(e) {
@@ -1717,22 +1965,15 @@
 
             const today = new Date();
             issueDate.value = today.toISOString().split('T')[0];
+            formId.value = generateFormId();
 
-            if (!formId.value) {
-                const id = 'ID' + today.getFullYear().toString().slice(2) +
-                    String(today.getMonth() + 1).padStart(2, '0') +
-                    String(today.getDate()).padStart(2, '0') +
-                    String(today.getHours()).padStart(2, '0') +
-                    String(today.getMinutes()).padStart(2, '0');
-                formId.value = id;
-            }
-
+            loadFromLocalStorage();
             focusItemCode();
             renderItems();
             setStatus('✅ جاهز - امسح الأوريكال', '#0f973d');
-            showToast('✅ النظام جاهز - امسح الأوريكال', 'success');
+            showToast('✅ النظام جاهز', 'success');
 
-            console.log('✅ نظام استمارة العهدة جاهز - 5 بنود لكل صفحة A4');
+            console.log('✅ نظام استمارة العهدة جاهز - مع حفظ وبحث وعرض');
         })();
     </script>
 
