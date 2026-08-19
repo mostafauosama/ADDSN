@@ -524,7 +524,7 @@
             background: #c82333;
         }
 
-        /* ===== Form Preview - تنسيق A4 صحيح ===== */
+        /* ===== Form Preview ===== */
         .form-preview-container {
             direction: rtl;
             font-family: 'Arial', 'Segoe UI', sans-serif;
@@ -725,7 +725,7 @@
             border-right: 4px solid #dc3545;
         }
 
-        /* ===== الطباعة - تنسيق A4 صحيح ===== */
+        /* ===== الطباعة ===== */
         @media print {
             .toolbar {
                 display: none !important;
@@ -1211,16 +1211,16 @@
 
                 let html = '';
                 items.forEach((item, index) => {
-                    const priceVal = item.price || '850';
-                    const filsVal = item.fils || '000';
+                    const priceVal = item.price || '';
+                    const filsVal = item.fils || '';
                     html += `
                             <tr>
                                 <td>${index + 1}</td>
-                                <td>${item.itemCode || '-'}</td>
-                                <td>${item.itemName || '-'}</td>
+                                <td>${item.itemCode || ''}</td>
+                                <td>${item.itemName || ''}</td>
                                 <td>1</td>
-                                <td>${item.modelNo || '-'}</td>
-                                <td>${item.serial || '-'}</td>
+                                <td>${item.modelNo || ''}</td>
+                                <td>${item.serial || ''}</td>
                                 <td>${priceVal}</td>
                                 <td>${filsVal}</td>
                                 <td>.........................</td>
@@ -1263,8 +1263,8 @@
                 let foundItem = itemsCatalog.find(i => i.itemCode === itemCode);
                 let itemName = foundItem ? foundItem.itemName : '';
                 let modelNo = foundItem ? foundItem.modelNo : '';
-                let price = foundItem ? foundItem.price : '850';
-                let fils = foundItem ? foundItem.fils : '000';
+                let price = foundItem ? foundItem.price : '';
+                let fils = foundItem ? foundItem.fils : '';
 
                 if (foundItem) {
                     setStatus(`✅ الصنف: ${itemName}`, '#0f973d');
@@ -1694,31 +1694,31 @@
                                 <table>
                                     <tr>
                                         <td class="label-cell" style="width:11%;">اسم مستلم العهدة<br/><span class="en-text">English Name</span></td>
-                                        <td class="data-cell" style="width:14%;">${formData.custodianName || '.........................'}</td>
+                                        <td class="data-cell" style="width:14%;">${formData.custodianName || ''}</td>
                                         <td class="label-cell" style="width:9%;">الجهة<br/><span class="en-text">Dep</span></td>
-                                        <td class="data-cell" style="width:14%;">${formData.department || '.........................'}</td>
+                                        <td class="data-cell" style="width:14%;">${formData.department || ''}</td>
                                         <td class="label-cell" style="width:10%;">المسمى الوظيفي<br/><span class="en-text">Job title</span></td>
-                                        <td class="data-cell" style="width:14%;">${formData.jobTitle || '.........................'}</td>
+                                        <td class="data-cell" style="width:14%;">${formData.jobTitle || ''}</td>
                                         <td class="label-cell" style="width:7%;">المبنى<br/><span class="en-text">Building</span></td>
-                                        <td class="data-cell" style="width:7%;">${formData.building || '....'}</td>
+                                        <td class="data-cell" style="width:7%;">${formData.building || ''}</td>
                                     </tr>
                                     <tr>
                                         <td class="label-cell">الغرفة<br/><span class="en-text">/Room</span></td>
-                                        <td class="data-cell">${formData.room || '....'}</td>
+                                        <td class="data-cell">${formData.room || ''}</td>
                                         <td class="label-cell">الدور<br/><span class="en-text">/Floor</span></td>
-                                        <td class="data-cell">${formData.floor || '....'}</td>
+                                        <td class="data-cell">${formData.floor || ''}</td>
                                         <td class="label-cell">التاريخ<br/><span class="en-text">Date</span></td>
                                         <td class="data-cell">${dateStr}</td>
                                         <td class="label-cell">الرقم الوظيفي<br/><span class="en-text">Emp. Number</span></td>
-                                        <td class="data-cell">${formData.empNumber || '.........................'}</td>
+                                        <td class="data-cell">${formData.empNumber || ''}</td>
                                     </tr>
                                     <tr>
                                         <td class="label-cell">الرقم المدني<br/><span class="en-text">Civil ID</span></td>
-                                        <td class="data-cell">${formData.civilId || '.........................'}</td>
+                                        <td class="data-cell">${formData.civilId || ''}</td>
                                         <td class="label-cell">نوع العهدة:<br/><span class="en-text">Custody Type</span></td>
                                         <td class="data-cell custody-type">${formData.custodyType || 'تنظيمية'}</td>
                                         <td class="label-cell">رقم التليفون<br/><span class="en-text">Phone No.</span></td>
-                                        <td class="data-cell" colspan="3">${formData.phoneNo || '.........................'}</td>
+                                        <td class="data-cell" colspan="3">${formData.phoneNo || ''}</td>
                                     </tr>
                                 </table>
 
@@ -1798,16 +1798,16 @@
                     } else {
                         pageItems.forEach((item, idx) => {
                             const globalIndex = startIndex + idx + 1;
-                            const priceVal = item.price || '850';
-                            const filsVal = item.fils || '000';
+                            const priceVal = item.price || '';
+                            const filsVal = item.fils || '';
                             itemsHtml += `
                                     <tr>
                                         <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${globalIndex}</td>
-                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.itemCode || '5996-AU-0000007'}</td>
-                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.itemName || '75 Standard Standing Kiosk Display'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.itemCode || ''}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.itemName || ''}</td>
                                         <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">1</td>
-                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.modelNo || 'RD75l-TV'}</td>
-                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.serial || '-'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.modelNo || ''}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.serial || ''}</td>
                                         <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${priceVal}</td>
                                         <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${filsVal}</td>
                                         <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">.........................</td>
@@ -1900,8 +1900,8 @@
                             <tr>
                                 <td>${index + 1}</td>
                                 <td><strong>${form.id}</strong></td>
-                                <td>${form.custodianName || '-'}</td>
-                                <td>${form.department || '-'}</td>
+                                <td>${form.custodianName || ''}</td>
+                                <td>${form.department || ''}</td>
                                 <td>${itemCount}</td>
                                 <td>${date}</td>
                                 <td>
@@ -2014,8 +2014,8 @@
                             itemName: String(row['اسم الصنف'] || row['Item Name'] || row['الاسم'] || '')
                             .trim(),
                             modelNo: String(row['الموديل'] || row['Model No.'] || '').trim(),
-                            price: String(row['السعر'] || row['Price'] || row['دينار'] || '850').trim(),
-                            fils: String(row['فلس'] || row['Fils'] || '000').trim()
+                            price: String(row['السعر'] || row['Price'] || row['دينار'] || '').trim(),
+                            fils: String(row['فلس'] || row['Fils'] || '').trim()
                         })).filter(i => i.itemCode);
 
                         itemsFileStatus.textContent = `✅ تم رفع: ${file.name} (${itemsCatalog.length} صنف)`;
@@ -2215,7 +2215,7 @@
             setStatus('✅ جاهز - امسح الأوريكال', '#0f973d');
             showToast('✅ النظام جاهز', 'success');
 
-            console.log('✅ نظام استمارة العهدة جاهز - مع تصدير Word و PDF');
+            console.log('✅ نظام استمارة العهدة جاهز - بدون قيم افتراضية');
         })();
     </script>
 
