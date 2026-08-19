@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>تسجيل الأوريكال والسريل</title>
+    <title>نظام تسجيل الأوريكال والسريل - الاستمارات</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+    
     <style>
         * {
             margin: 0;
@@ -13,467 +19,1137 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8ecf1 0%, #d0d9e6 100%);
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-radius: 32px;
-            padding: 40px 35px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: transform 0.25s ease;
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
+        .header {
+            background: linear-gradient(135deg, #1a2639 0%, #2c3e50 100%);
+            color: white;
+            padding: 25px 30px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        h1 {
+        .header h1 {
             font-size: 28px;
             font-weight: 700;
+        }
+
+        .header .stats {
+            display: flex;
+            gap: 30px;
+            font-size: 14px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 12px;
+        }
+
+        .header .stats span {
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
             color: #1a2639;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
         }
 
-        h1 small {
-            font-size: 14px;
-            font-weight: 400;
-            color: #4a5b6e;
-            background: #eef2f7;
+        .card-title .badge {
+            background: #3b7cff;
+            color: white;
             padding: 2px 14px;
-            border-radius: 40px;
-            letter-spacing: 0.3px;
+            border-radius: 20px;
+            font-size: 13px;
         }
 
-        .subtitle {
-            color: #3d4f62;
-            font-size: 15px;
-            margin-bottom: 30px;
-            border-right: 4px solid #3b7cff;
-            padding-right: 16px;
-            background: rgba(59, 124, 255, 0.06);
-            border-radius: 0 8px 8px 0;
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .form-number-display {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a2639;
+        }
+
+        .form-number-display span {
+            color: #3b7cff;
+            font-size: 24px;
+        }
+
+        .entry-section {
+            background: #f8fafc;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px dashed #dce3ec;
+        }
+
+        .entry-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .entry-row {
+                grid-template-columns: 1fr;
+            }
         }
 
         .input-group {
-            margin-bottom: 24px;
+            position: relative;
         }
 
         .input-group label {
             display: block;
             font-weight: 600;
-            font-size: 15px;
-            color: #1e2b3c;
-            margin-bottom: 8px;
-            letter-spacing: 0.3px;
-        }
-
-        .input-group label span {
-            color: #3b7cff;
-            margin-right: 4px;
+            color: #1a2639;
+            margin-bottom: 6px;
+            font-size: 13px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 14px 18px;
-            font-size: 16px;
+            padding: 12px 16px;
+            font-size: 15px;
             border: 2px solid #dce3ec;
-            border-radius: 18px;
-            background: #ffffff;
-            transition: all 0.25s ease;
-            color: #0b1a2b;
-            font-weight: 500;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background: white;
         }
 
         .input-group input:focus {
             outline: none;
             border-color: #3b7cff;
-            box-shadow: 0 0 0 5px rgba(59, 124, 255, 0.15);
-            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 124, 255, 0.1);
         }
 
-        .input-group input::placeholder {
-            color: #a0b2c7;
-            font-weight: 400;
-            font-size: 14px;
+        .input-group .scan-btn {
+            position: absolute;
+            left: 8px;
+            bottom: 8px;
+            background: #1a2639;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
         }
 
-        .actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin: 28px 0 20px;
+        .input-group .scan-btn:hover {
+            background: #2c3e50;
         }
 
         .btn {
-            flex: 1;
-            min-width: 120px;
-            padding: 14px 18px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 60px;
-            font-size: 16px;
+            border-radius: 10px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
+            transition: all 0.3s ease;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: #eef2f7;
-            color: #1e2b3c;
+            gap: 6px;
+            white-space: nowrap;
         }
 
-        .btn-primary {
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+
+        .btn-primary { background: #1a2639; color: white; }
+        .btn-success { background: #0f973d; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: #1a2639; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-purple { background: #6f42c1; color: white; }
+        .btn-orange { background: #fd7e14; color: white; }
+        .btn-outline { background: transparent; color: #1a2639; border: 2px solid #dce3ec; }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .actions-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .entries-list {
+            margin-top: 15px;
+        }
+
+        .entry-item {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr auto;
+            gap: 12px;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #e9ecef;
+            align-items: center;
+        }
+
+        @media (max-width: 600px) {
+            .entry-item {
+                grid-template-columns: 1fr;
+                gap: 6px;
+            }
+        }
+
+        .entry-item .entry-index {
+            font-weight: 700;
+            color: #3b7cff;
+            font-size: 14px;
+            min-width: 30px;
+        }
+
+        .entry-item .entry-data {
+            font-weight: 500;
+            color: #1a2639;
+        }
+
+        .entry-item .entry-data small {
+            color: #6c757d;
+            font-weight: 400;
+            font-size: 12px;
+        }
+
+        .entry-item .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .entry-item .remove-btn:hover {
+            background: #c82333;
+        }
+
+        .empty-entries {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+
+        .table-container {
+            margin-top: 15px;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        table thead {
             background: #1a2639;
             color: white;
-            box-shadow: 0 6px 14px rgba(26, 38, 57, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
-        .btn-primary:hover {
-            background: #2b3b55;
-            transform: scale(1.02);
-            box-shadow: 0 8px 20px rgba(26, 38, 57, 0.35);
+        table th {
+            padding: 12px 14px;
+            text-align: right;
+            font-weight: 600;
         }
 
-        .btn-secondary {
-            background: #eef2f7;
-            color: #1e2b3c;
-            border: 1px solid #d0d9e6;
+        table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e9ecef;
         }
 
-        .btn-secondary:hover {
-            background: #e2e8f0;
-            transform: scale(1.02);
+        table tbody tr:hover {
+            background: #f8f9fa;
         }
 
-        .btn-success {
-            background: #0f973d;
-            color: white;
-            box-shadow: 0 6px 14px rgba(15, 151, 61, 0.25);
-        }
-
-        .btn-success:hover {
-            background: #0d7e32;
-            transform: scale(1.02);
-        }
-
-        .display-box {
-            background: #f0f4fc;
-            border-radius: 20px;
-            padding: 18px 22px;
-            margin-top: 16px;
-            border: 1px solid #dce3ec;
-        }
-
-        .display-box p {
+        .status-bar {
+            background: #f8f9fa;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-top: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 15px;
-            padding: 6px 0;
-            border-bottom: 1px dashed #c8d3e3;
-            margin: 0;
+            flex-wrap: wrap;
         }
 
-        .display-box p:last-child {
-            border-bottom: none;
+        .scanner-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
-        .display-box .label {
-            color: #3d5a78;
-            font-weight: 500;
+        .scanner-container.active {
+            display: flex;
         }
 
-        .display-box .value {
-            font-weight: 700;
-            color: #0b1a2b;
+        .scanner-box {
             background: white;
-            padding: 2px 16px;
-            border-radius: 40px;
-            font-size: 14px;
-            max-width: 60%;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .scanner-box #reader {
+            width: 100%;
+            border-radius: 12px;
             overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            border: 1px solid #dce3ec;
         }
 
-        .display-box .empty-value {
-            color: #94a9c2;
-            font-weight: 400;
-            font-style: italic;
-        }
-
-        .storage-key-badge {
-            display: inline-block;
-            background: #1a2639;
+        .scanner-box .close-scanner {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #dc3545;
             color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .auto-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 16px;
+            border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
-            padding: 4px 14px;
-            border-radius: 40px;
-            letter-spacing: 0.6px;
-            margin-top: 20px;
-            font-family: 'Courier New', monospace;
-            background: #2b3b55;
+            cursor: pointer;
         }
 
-        .footer-note {
-            font-size: 13px;
-            color: #5b6f86;
-            margin-top: 14px;
-            text-align: center;
+        .auto-indicator .dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
         }
 
-        @media (max-width: 480px) {
-            .card {
-                padding: 28px 18px;
-            }
-            h1 {
-                font-size: 22px;
-                flex-wrap: wrap;
-            }
-            .btn {
-                min-width: 100%;
-            }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #f0f2f5;
         }
     </style>
 </head>
 <body>
 
-    <div class="card">
-
-        <h1>
-            📋 تسجيل الجهاز
-            <small>GGLJWTP</small>
-        </h1>
-        <div class="subtitle">
-            يتم تخزين البيانات محلياً في <strong>LocalStorage</strong> تحت المفتاح <code>GGLJWTP</code>
+<div class="container">
+    <!-- الهيدر -->
+    <div class="header">
+        <div>
+            <h1>📋 نظام تسجيل الأوريكال والسريل</h1>
+            <div style="font-size: 13px; opacity: 0.8; margin-top: 5px;">
+                🗝️ المفتاح: GGLJWTP · 📦 إجمالي الاستمارات: <span id="totalForms">0</span>
+                · 📄 إجمالي السجلات: <span id="totalRecords">0</span>
+            </div>
         </div>
-
-        <!-- حقل رقم الأوريكال -->
-        <div class="input-group">
-            <label for="oricalInput">🔑 رقم الأوريكال <span>*</span></label>
-            <input
-            type="text"
-            id="oricalInput"
-            placeholder="مثال: OR-12345-ABCD"
-            autocomplete="off"
-            />
-        </div>
-
-        <!-- حقل رقم السريل -->
-        <div class="input-group">
-            <label for="serialInput">📟 رقم السريل (Serial) <span>*</span></label>
-            <input
-            type="text"
-            id="serialInput"
-            placeholder="مثال: SN-9876-XYZ"
-            autocomplete="off"
-            />
-        </div>
-
-        <!-- الأزرار -->
-        <div class="actions">
-            <button class="btn btn-primary" id="saveBtn">💾 حفظ</button>
-            <button class="btn btn-secondary" id="loadBtn">📂 تحميل</button>
-            <button class="btn btn-secondary" id="clearBtn">🗑️ مسح</button>
-        </div>
-
-        <!-- عرض القيم المخزنة -->
-        <div class="display-box" id="displayBox">
-            <p>
-                <span class="label">📌 الأوريكال</span>
-                <span class="value empty-value" id="displayOrical">—</span>
-            </p>
-            <p>
-                <span class="label">📌 السريل</span>
-                <span class="value empty-value" id="displaySerial">—</span>
-            </p>
-        </div>
-
-        <!-- مؤشر المفتاح المستخدم -->
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-            <span class="storage-key-badge">🗝️ KEY: GGLJWTP</span>
-            <span style="font-size: 13px; color: #4a5b6e;" id="statusMsg">🟢 جاهز</span>
-        </div>
-
-        <div class="footer-note">
-            ⚡ البيانات تُحفظ في متصفحك فقط · تستخدم LocalStorage
+        <div class="stats">
+            <div>📄 الاستمارة الحالية: <span id="currentFormDisplay">1</span></div>
+            <div>📌 الأرقام المسجلة: <span id="entriesCount">0</span></div>
         </div>
     </div>
 
-    <script>
-        (function() {
-            'use strict';
+    <div class="main-grid">
+        <!-- الجانب الأيسر: إدخال البيانات -->
+        <div class="card">
+            <div class="card-title">
+                📝 استمارة جديدة
+                <span class="badge">أضف الأرقام</span>
+            </div>
 
-            // --- المفتاح الثابت المطلوب ---
-            const STORAGE_KEY = 'GGLJWTP';
+            <div class="form-header">
+                <div class="form-number-display">
+                    📄 رقم الاستمارة: <span id="formNumber">1</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="auto-indicator" id="autoIndicator">
+                        <span class="dot"></span> تلقائي
+                    </span>
+                </div>
+            </div>
 
-            // --- عناصر DOM ---
-            const oricalInput = document.getElementById('oricalInput');
-            const serialInput = document.getElementById('serialInput');
-            const displayOrical = document.getElementById('displayOrical');
-            const displaySerial = document.getElementById('displaySerial');
-            const statusMsg = document.getElementById('statusMsg');
+            <!-- إدخال الأرقام -->
+            <div class="entry-section" id="entrySection">
+                <div class="entry-row">
+                    <div class="input-group">
+                        <label for="oricalInput">🔑 رقم الأوريكال</label>
+                        <input type="text" id="oricalInput" placeholder="امسح أو اكتب الأوريكال" autocomplete="off" />
+                        <button class="scan-btn" id="scanOricalBtn">📷</button>
+                    </div>
+                    <div class="input-group">
+                        <label for="serialInput">📟 الرقم المسلسل</label>
+                        <input type="text" id="serialInput" placeholder="امسح أو اكتب السريل" autocomplete="off" disabled />
+                        <button class="scan-btn" id="scanSerialBtn" style="display:none;">📷</button>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center; padding-bottom: 4px;">
+                        <button class="btn btn-success btn-sm" id="addEntryBtn" style="height: 44px;">➕ إضافة</button>
+                    </div>
+                </div>
 
-            const saveBtn = document.getElementById('saveBtn');
-            const loadBtn = document.getElementById('loadBtn');
-            const clearBtn = document.getElementById('clearBtn');
+                <!-- قائمة الأرقام المؤقتة -->
+                <div class="entries-list" id="entriesList">
+                    <div class="empty-entries">📭 لم يتم إضافة أي أرقام بعد</div>
+                </div>
+            </div>
 
-            // --- دوال مساعدة ---
+            <!-- أزرار الاستمارة -->
+            <div class="form-actions">
+                <button class="btn btn-primary" id="saveFormBtn">💾 حفظ الاستمارة</button>
+                <button class="btn btn-warning" id="resetFormBtn">🔄 استمارة جديدة</button>
+                <button class="btn btn-outline btn-sm" id="cancelFormBtn">✕ إلغاء</button>
+            </div>
 
-            // تحديث واجهة العرض من الـ LocalStorage
-            function updateDisplayFromStorage() {
-                try {
-                    const storedData = localStorage.getItem(STORAGE_KEY);
-                    if (storedData) {
-                        const parsed = JSON.parse(storedData);
-                        // نتأكد من وجود الخصائص
-                        const oricalVal = (parsed.orical !== undefined && parsed.orical !== null) ? parsed.orical : '';
-                        const serialVal = (parsed.serial !== undefined && parsed.serial !== null) ? parsed.serial : '';
+            <div class="status-bar" style="margin-top: 15px;">
+                <div id="statusText">✅ جاهز لإدخال الأرقام</div>
+                <div style="font-size: 12px; color: #666;">
+                    التركيز: <span id="focusIndicator">الأوريكال</span>
+                </div>
+            </div>
+        </div>
 
-                        // عرض في حقلي العرض
-                        displayOrical.textContent = oricalVal || '—';
-                        displaySerial.textContent = serialVal || '—';
+        <!-- الجانب الأيمن: عرض البيانات -->
+        <div class="card">
+            <div class="card-title">
+                📊 الاستمارات المسجلة
+                <span class="badge" id="formsCountBadge">0</span>
+            </div>
 
-                        // إذا كانت القيم موجودة نغير الكلاس
-                        displayOrical.className = 'value' + (oricalVal ? '' : ' empty-value');
-                        displaySerial.className = 'value' + (serialVal ? '' : ' empty-value');
+            <div class="actions-bar">
+                <button class="btn btn-info btn-sm" id="printPdfBtn">📄 PDF</button>
+                <button class="btn btn-purple btn-sm" id="exportJsonBtn">📦 JSON</button>
+                <button class="btn btn-orange btn-sm" id="exportExcelBtn">📊 Excel</button>
+                <button class="btn btn-danger btn-sm" id="clearAllBtn">🗑️ مسح الكل</button>
+            </div>
 
-                        // ملء الحقول أيضاً لتكون متطابقة
-                        oricalInput.value = oricalVal;
-                        serialInput.value = serialVal;
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:50px;">#</th>
+                            <th>رقم الاستمارة</th>
+                            <th>عدد الأرقام</th>
+                            <th>التاريخ</th>
+                            <th style="width:60px;">حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="formsTableBody">
+                        <tr class="empty-row">
+                            <td colspan="5">📭 لا توجد استمارات مسجلة</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-                        statusMsg.textContent = '✅ تم التحميل';
-                        statusMsg.style.color = '#0f973d';
+<!-- نافذة الماسح -->
+<div class="scanner-container" id="scannerContainer">
+    <div class="scanner-box">
+        <button class="close-scanner" id="closeScanner">✕ إغلاق</button>
+        <div class="scanner-title" id="scannerTitle">📷 مسح الأوريكال</div>
+        <div id="reader"></div>
+        <div style="text-align:center; margin-top:15px; color:#666; font-size:13px;">
+            ⚡ وجه الكاميرا إلى الباركود أو QR Code
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ===== الثوابت =====
+    const STORAGE_KEY = 'GGLJWTP';
+    const FORM_COUNTER_KEY = 'GGLJWTP_FORM_COUNTER';
+
+    // ===== العناصر =====
+    const oricalInput = document.getElementById('oricalInput');
+    const serialInput = document.getElementById('serialInput');
+    const entriesList = document.getElementById('entriesList');
+    const formsTableBody = document.getElementById('formsTableBody');
+    const statusText = document.getElementById('statusText');
+    const focusIndicator = document.getElementById('focusIndicator');
+    const formNumberSpan = document.getElementById('formNumber');
+    const currentFormDisplay = document.getElementById('currentFormDisplay');
+    const entriesCountSpan = document.getElementById('entriesCount');
+    const totalFormsSpan = document.getElementById('totalForms');
+    const totalRecordsSpan = document.getElementById('totalRecords');
+    const formsCountBadge = document.getElementById('formsCountBadge');
+    const autoIndicator = document.getElementById('autoIndicator');
+
+    const addEntryBtn = document.getElementById('addEntryBtn');
+    const saveFormBtn = document.getElementById('saveFormBtn');
+    const resetFormBtn = document.getElementById('resetFormBtn');
+    const cancelFormBtn = document.getElementById('cancelFormBtn');
+    const printPdfBtn = document.getElementById('printPdfBtn');
+    const exportJsonBtn = document.getElementById('exportJsonBtn');
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const scanOricalBtn = document.getElementById('scanOricalBtn');
+    const scanSerialBtn = document.getElementById('scanSerialBtn');
+
+    const scannerContainer = document.getElementById('scannerContainer');
+    const closeScannerBtn = document.getElementById('closeScanner');
+    const scannerTitle = document.getElementById('scannerTitle');
+
+    // ===== المتغيرات =====
+    let forms = []; // [{ id, formNumber, entries: [{orical, serial}], timestamp }]
+    let currentFormNumber = 1;
+    let currentEntries = []; // {orical, serial}
+    let currentFocus = 'orical';
+    let isAutoMode = true;
+    let html5QrCode = null;
+    let isScanning = false;
+    let scanTarget = 'orical';
+
+    // ===== تحميل البيانات =====
+    function loadData() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) {
+                    forms = parsed;
+                }
+            }
+        } catch (e) { console.warn('خطأ في تحميل البيانات:', e); }
+
+        try {
+            const counter = localStorage.getItem(FORM_COUNTER_KEY);
+            if (counter) {
+                currentFormNumber = parseInt(counter) || 1;
+            }
+        } catch (e) {}
+
+        renderForms();
+        updateStats();
+        updateFormNumber();
+    }
+
+    // ===== حفظ البيانات =====
+    function saveData() {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(forms));
+            localStorage.setItem(FORM_COUNTER_KEY, String(currentFormNumber));
+        } catch (e) {
+            console.error('خطأ في الحفظ:', e);
+            setStatus('❌ فشل الحفظ', '#dc3545');
+        }
+    }
+
+    // ===== عرض الاستمارات =====
+    function renderForms() {
+        if (forms.length === 0) {
+            formsTableBody.innerHTML = `
+                <tr class="empty-row">
+                    <td colspan="5">📭 لا توجد استمارات مسجلة</td>
+                </tr>
+            `;
+            return;
+        }
+
+        let html = '';
+        forms.forEach((form, index) => {
+            const entriesCount = form.entries ? form.entries.length : 0;
+            const date = form.timestamp ? new Date(form.timestamp).toLocaleDateString('ar-EG') : '-';
+            html += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${form.formNumber}</strong></td>
+                    <td>${entriesCount}</td>
+                    <td>${date}</td>
+                    <td>
+                        <button onclick="window.deleteForm(${index})" 
+                                style="background:#dc3545;color:white;border:none;padding:3px 12px;border-radius:6px;cursor:pointer;font-size:12px;">
+                            ✕
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+        formsTableBody.innerHTML = html;
+    }
+
+    // ===== عرض الأرقام المؤقتة =====
+    function renderEntries() {
+        if (currentEntries.length === 0) {
+            entriesList.innerHTML = `<div class="empty-entries">📭 لم يتم إضافة أي أرقام بعد</div>`;
+            entriesCountSpan.textContent = '0';
+            return;
+        }
+
+        let html = '';
+        currentEntries.forEach((entry, index) => {
+            html += `
+                <div class="entry-item">
+                    <span class="entry-index">${index + 1}</span>
+                    <span class="entry-data">🔑 ${entry.orical}</span>
+                    <span class="entry-data">📟 ${entry.serial}</span>
+                    <button class="remove-btn" onclick="window.removeEntry(${index})">✕ حذف</button>
+                </div>
+            `;
+        });
+        entriesList.innerHTML = html;
+        entriesCountSpan.textContent = currentEntries.length;
+    }
+
+    // ===== تحديث الإحصائيات =====
+    function updateStats() {
+        const totalForms = forms.length;
+        const totalRecords = forms.reduce((sum, f) => sum + (f.entries ? f.entries.length : 0), 0);
+        totalFormsSpan.textContent = totalForms;
+        totalRecordsSpan.textContent = totalRecords;
+        formsCountBadge.textContent = totalForms;
+    }
+
+    // ===== تحديث رقم الاستمارة =====
+    function updateFormNumber() {
+        formNumberSpan.textContent = currentFormNumber;
+        currentFormDisplay.textContent = currentFormNumber;
+    }
+
+    // ===== تعيين الحالة =====
+    function setStatus(msg, color = '#1a2639') {
+        statusText.textContent = msg;
+        statusText.style.color = color;
+    }
+
+    // ===== التركيز =====
+    function focusOrical() {
+        currentFocus = 'orical';
+        focusIndicator.textContent = 'الأوريكال';
+        oricalInput.disabled = false;
+        serialInput.disabled = true;
+        oricalInput.focus();
+        scanOricalBtn.style.display = 'inline-block';
+        scanSerialBtn.style.display = 'none';
+    }
+
+    function focusSerial() {
+        currentFocus = 'serial';
+        focusIndicator.textContent = 'السريل';
+        oricalInput.disabled = true;
+        serialInput.disabled = false;
+        serialInput.focus();
+        scanOricalBtn.style.display = 'none';
+        scanSerialBtn.style.display = 'inline-block';
+    }
+
+    // ===== إضافة رقم =====
+    function addEntry() {
+        const orical = oricalInput.value.trim();
+        const serial = serialInput.value.trim();
+
+        if (!orical || !serial) {
+            setStatus('⚠️ يجب إدخال الأوريكال والسريل', '#ffc107');
+            return;
+        }
+
+        // التحقق من عدم التكرار في نفس الاستمارة
+        const exists = currentEntries.some(e => e.orical === orical || e.serial === serial);
+        if (exists) {
+            setStatus('⚠️ هذا الرقم موجود بالفعل في الاستمارة', '#ffc107');
+            return;
+        }
+
+        currentEntries.push({ orical, serial });
+        renderEntries();
+        oricalInput.value = '';
+        serialInput.value = '';
+        serialInput.disabled = true;
+        focusOrical();
+        setStatus(`✅ تم إضافة رقم #${currentEntries.length}`, '#0f973d');
+
+        // إذا كان الوضع التلقائي مفعلاً، نفتح الماسح للسريل بعد إضافة كل رقم
+        // لكن هذا يتم من خلال حدث المسح
+    }
+
+    // ===== حذف رقم مؤقت =====
+    function removeEntry(index) {
+        currentEntries.splice(index, 1);
+        renderEntries();
+        setStatus('🗑️ تم حذف الرقم', '#dc3545');
+        if (currentEntries.length === 0) {
+            focusOrical();
+        }
+    }
+
+    // ===== حفظ الاستمارة =====
+    function saveForm() {
+        if (currentEntries.length === 0) {
+            setStatus('⚠️ يجب إضافة رقم واحد على الأقل', '#ffc107');
+            return;
+        }
+
+        forms.push({
+            formNumber: currentFormNumber,
+            entries: [...currentEntries],
+            timestamp: new Date().toISOString()
+        });
+
+        currentFormNumber++;
+        currentEntries = [];
+        renderEntries();
+        renderForms();
+        updateStats();
+        updateFormNumber();
+        saveData();
+        focusOrical();
+        setStatus(`✅ تم حفظ الاستمارة #${currentFormNumber - 1}`, '#0f973d');
+    }
+
+    // ===== حذف استمارة =====
+    function deleteForm(index) {
+        if (confirm(`هل تريد حذف الاستمارة رقم ${forms[index].formNumber}؟`)) {
+            forms.splice(index, 1);
+            renderForms();
+            updateStats();
+            saveData();
+            setStatus('🗑️ تم حذف الاستمارة', '#dc3545');
+        }
+    }
+
+    // ===== إلغاء الاستمارة الحالية =====
+    function cancelForm() {
+        if (currentEntries.length > 0) {
+            if (!confirm('⚠️ سيتم فقدان الأرقام غير المحفوظة. هل أنت متأكد؟')) {
+                return;
+            }
+        }
+        currentEntries = [];
+        renderEntries();
+        oricalInput.value = '';
+        serialInput.value = '';
+        serialInput.disabled = true;
+        focusOrical();
+        setStatus('🔄 تم إلغاء الاستمارة', '#ffc107');
+    }
+
+    // ===== إعادة تعيين الاستمارة =====
+    function resetForm() {
+        if (currentEntries.length > 0) {
+            if (!confirm('⚠️ سيتم فقدان الأرقام غير المحفوظة. هل أنت متأكد؟')) {
+                return;
+            }
+        }
+        currentEntries = [];
+        renderEntries();
+        oricalInput.value = '';
+        serialInput.value = '';
+        serialInput.disabled = true;
+        focusOrical();
+        setStatus('🔄 استمارة جديدة جاهزة', '#1a2639');
+    }
+
+    // ===== الماسح الضوئي =====
+    function openScanner(target) {
+        if (isScanning) return;
+        scanTarget = target;
+        
+        scannerContainer.classList.add('active');
+        scannerTitle.textContent = target === 'orical' ? '📷 مسح الأوريكال' : '📷 مسح السريل';
+        
+        if (typeof Html5Qrcode !== 'undefined') {
+            html5QrCode = new Html5Qrcode("reader");
+            const config = {
+                fps: 15,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                (decodedText) => {
+                    if (target === 'orical') {
+                        oricalInput.value = decodedText;
+                        setStatus('✅ تم قراءة الأوريكال', '#0f973d');
+                        if (isAutoMode) {
+                            setTimeout(() => {
+                                focusSerial();
+                                setStatus('📷 جاهز لقراءة السريل', '#17a2b8');
+                                setTimeout(() => {
+                                    closeScannerNow();
+                                    setTimeout(() => openScanner('serial'), 400);
+                                }, 300);
+                            }, 400);
+                        } else {
+                            closeScannerNow();
+                        }
                     } else {
-                        // لا توجد بيانات
-                        displayOrical.textContent = '—';
-                        displaySerial.textContent = '—';
-                        displayOrical.className = 'value empty-value';
-                        displaySerial.className = 'value empty-value';
-                        // لا نمسح حقول الإدخال تلقائياً حتى لا نفقد ما كتبه المستخدم
-                        statusMsg.textContent = '📭 لا توجد بيانات مخزنة';
-                        statusMsg.style.color = '#b8860b';
+                        serialInput.value = decodedText;
+                        setStatus('✅ تم قراءة السريل', '#0f973d');
+                        if (isAutoMode) {
+                            setTimeout(() => {
+                                // إضافة الرقم تلقائياً
+                                const orical = oricalInput.value.trim();
+                                const serial = serialInput.value.trim();
+                                if (orical && serial) {
+                                    // التحقق من عدم التكرار
+                                    const exists = currentEntries.some(e => e.orical === orical || e.serial === serial);
+                                    if (!exists) {
+                                        currentEntries.push({ orical, serial });
+                                        renderEntries();
+                                        oricalInput.value = '';
+                                        serialInput.value = '';
+                                        serialInput.disabled = true;
+                                        focusOrical();
+                                        setStatus(`✅ تم إضافة رقم #${currentEntries.length}`, '#0f973d');
+                                    } else {
+                                        setStatus('⚠️ هذا الرقم موجود مسبقاً', '#ffc107');
+                                        serialInput.value = '';
+                                        focusSerial();
+                                    }
+                                }
+                                closeScannerNow();
+                            }, 400);
+                        } else {
+                            closeScannerNow();
+                        }
                     }
-                } catch (e) {
-                    console.warn('خطأ في قراءة LocalStorage:', e);
-                    statusMsg.textContent = '⚠️ خطأ في القراءة';
-                    statusMsg.style.color = '#b22222';
-                }
-            }
-
-            // حفظ البيانات من الحقول إلى LocalStorage
-            function saveDataToStorage() {
-                const oricalVal = oricalInput.value.trim();
-                const serialVal = serialInput.value.trim();
-
-                // نسمح بحفظ قيم فارغة (المستخدم قد يريد مسح حقل معين)
-                // لكن نعطي تنبيه إذا كان كلاهما فارغين (اختياري)
-                if (oricalVal === '' && serialVal === '') {
-                    // نعطي تحذير لكن نكمل (يمكن أن يريد مسح كل شيء)
-                    if (!confirm('⚠️ كلا الحقلين فارغان. هل تريد حفظ بيانات فارغة؟')) {
-                        return;
-                    }
-                }
-
-                const dataToStore = {
-                    orical: oricalVal,
-                    serial: serialVal
-                };
-
-                try {
-                    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
-                    // تحديث العرض
-                    updateDisplayFromStorage();
-                    statusMsg.textContent = '💾 تم الحفظ بنجاح';
-                    statusMsg.style.color = '#0f973d';
-
-                    // إظهار رسالة منبثقة بسيطة (اختياري)
-                    // يمكنك إزالتها إذا أردت
-                    // alert('✅ تم حفظ البيانات في LocalStorage تحت مفتاح GGLJWTP');
-                } catch (e) {
-                    console.error('فشل الحفظ في LocalStorage:', e);
-                    statusMsg.textContent = '❌ فشل الحفظ';
-                    statusMsg.style.color = '#b22222';
-                    alert('حدث خطأ أثناء الحفظ. تأكد من أن المتصفح يسمح بالتخزين المحلي.');
-                }
-            }
-
-            // مسح البيانات من LocalStorage وحقول الإدخال والعرض
-            function clearAllData() {
-                if (!confirm('🗑️ هل أنت متأكد من مسح جميع البيانات المخزنة؟')) {
-                    return;
-                }
-
-                try {
-                    localStorage.removeItem(STORAGE_KEY);
-                    // تفريغ الحقول
-                    oricalInput.value = '';
-                    serialInput.value = '';
-                    // تحديث العرض
-                    updateDisplayFromStorage();
-                    statusMsg.textContent = '🗑️ تم المسح';
-                    statusMsg.style.color = '#b8860b';
-                } catch (e) {
-                    console.error('فشل المسح:', e);
-                    statusMsg.textContent = '❌ فشل المسح';
-                    statusMsg.style.color = '#b22222';
-                }
-            }
-
-            // --- ربط الأحداث ---
-
-            // حفظ
-            saveBtn.addEventListener('click', saveDataToStorage);
-
-            // تحميل (يعيد قراءة البيانات من التخزين ويعرضها)
-            loadBtn.addEventListener('click', function() {
-                updateDisplayFromStorage();
-                statusMsg.textContent = '🔄 تم التحميل';
-                statusMsg.style.color = '#1a2639';
+                },
+                (error) => {}
+            ).catch(err => {
+                console.error('فشل بدء الكاميرا:', err);
+                setStatus('❌ فشل تشغيل الكاميرا', '#dc3545');
+                closeScannerNow();
             });
+            
+            isScanning = true;
+        } else {
+            setStatus('❌ مكتبة الماسح غير محملة', '#dc3545');
+            closeScannerNow();
+        }
+    }
 
-            // مسح
-            clearBtn.addEventListener('click', clearAllData);
+    function closeScannerNow() {
+        if (html5QrCode) {
+            try {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                }).catch(() => {});
+            } catch (e) {}
+            html5QrCode = null;
+        }
+        scannerContainer.classList.remove('active');
+        isScanning = false;
+    }
 
-            // (اختياري) حفظ عند الضغط على Enter في أي حقل
-            oricalInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    saveDataToStorage();
-                }
+    // ===== تصدير PDF =====
+    function exportPDF() {
+        if (forms.length === 0) {
+            alert('⚠️ لا توجد بيانات لتصديرها');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('landscape', 'pt', 'a4');
+        
+        doc.setFontSize(18);
+        doc.text('تقرير الاستمارات - الأوريكال والسريل', 40, 50);
+        doc.setFontSize(11);
+        doc.text(`تاريخ التصدير: ${new Date().toLocaleDateString('ar-EG')}`, 40, 70);
+        doc.text(`عدد الاستمارات: ${forms.length}`, 40, 85);
+        
+        let tableData = [];
+        forms.forEach((form, idx) => {
+            form.entries.forEach((entry, eIdx) => {
+                tableData.push([
+                    idx + 1,
+                    form.formNumber,
+                    eIdx + 1,
+                    entry.orical,
+                    entry.serial
+                ]);
             });
-            serialInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    saveDataToStorage();
-                }
+        });
+        
+        doc.autoTable({
+            head: [['#', 'رقم الاستمارة', 'م', 'رقم الأوريكال', 'الرقم المسلسل']],
+            body: tableData,
+            startY: 100,
+            styles: {
+                font: 'helvetica',
+                fontSize: 9,
+                cellPadding: 5,
+                halign: 'center'
+            },
+            headStyles: {
+                fillColor: [26, 38, 57],
+                textColor: [255, 255, 255],
+                fontSize: 10,
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: {
+                fillColor: [248, 249, 250]
+            }
+        });
+        
+        doc.save('تقرير_الاستمارات.pdf');
+        setStatus('📄 تم تصدير PDF', '#17a2b8');
+    }
+
+    // ===== تصدير JSON =====
+    function exportJSON() {
+        if (forms.length === 0) {
+            alert('⚠️ لا توجد بيانات لتصديرها');
+            return;
+        }
+        const jsonStr = JSON.stringify(forms, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `الاستمارات_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setStatus('📦 تم تصدير JSON', '#6f42c1');
+    }
+
+    // ===== تصدير Excel =====
+    function exportExcel() {
+        if (forms.length === 0) {
+            alert('⚠️ لا توجد بيانات لتصديرها');
+            return;
+        }
+
+        let data = [];
+        forms.forEach((form, idx) => {
+            form.entries.forEach((entry, eIdx) => {
+                data.push({
+                    'رقم الاستمارة': form.formNumber,
+                    'م': eIdx + 1,
+                    'رقم الأوريكال': entry.orical,
+                    'الرقم المسلسل': entry.serial,
+                    'التاريخ': new Date(form.timestamp).toLocaleString('ar-EG')
+                });
             });
+        });
 
-            // --- تهيئة الصفحة: تحميل البيانات المخزنة إن وجدت ---
-            updateDisplayFromStorage();
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.json_to_sheet(data);
+        XLSX.utils.book_append_sheet(wb, ws, 'الاستمارات');
+        XLSX.writeFile(wb, `الاستمارات_${new Date().toISOString().slice(0,10)}.xlsx`);
+        setStatus('📊 تم تصدير Excel', '#6f42c1');
+    }
 
-            // إضافة رسالة ترحيب في الـ status
-            // لكننا نتركها كما هي من updateDisplayFromStorage
+    // ===== مسح الكل =====
+    function clearAll() {
+        if (forms.length === 0 && currentEntries.length === 0) {
+            alert('📭 لا توجد بيانات للمسح');
+            return;
+        }
+        if (!confirm('⚠️ هل أنت متأكد من مسح جميع البيانات؟')) return;
+        forms = [];
+        currentEntries = [];
+        currentFormNumber = 1;
+        renderEntries();
+        renderForms();
+        updateStats();
+        updateFormNumber();
+        saveData();
+        focusOrical();
+        setStatus('🗑️ تم مسح جميع البيانات', '#dc3545');
+    }
 
-            console.log('✅ صفحة GGLJWTP جاهزة — LocalStorage مفتاح:', STORAGE_KEY);
+    // ===== ربط الأحداث =====
 
-        })();
-    </script>
+    // إضافة رقم
+    addEntryBtn.addEventListener('click', addEntry);
+
+    // حفظ الاستمارة
+    saveFormBtn.addEventListener('click', saveForm);
+
+    // إعادة تعيين
+    resetFormBtn.addEventListener('click', resetForm);
+
+    // إلغاء
+    cancelFormBtn.addEventListener('click', cancelForm);
+
+    // PDF
+    printPdfBtn.addEventListener('click', exportPDF);
+
+    // JSON
+    exportJsonBtn.addEventListener('click', exportJSON);
+
+    // Excel
+    exportExcelBtn.addEventListener('click', exportExcel);
+
+    // مسح الكل
+    clearAllBtn.addEventListener('click', clearAll);
+
+    // مسح الأوريكال
+    scanOricalBtn.addEventListener('click', () => openScanner('orical'));
+
+    // مسح السريل
+    scanSerialBtn.addEventListener('click', () => openScanner('serial'));
+
+    // إغلاق الماسح
+    closeScannerBtn.addEventListener('click', closeScannerNow);
+
+    // ===== اختصارات لوحة المفاتيح =====
+
+    // Enter على الأوريكال
+    oricalInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (oricalInput.value.trim()) {
+                focusSerial();
+                setStatus('📷 جاهز لقراءة السريل', '#17a2b8');
+                if (isAutoMode) {
+                    setTimeout(() => openScanner('serial'), 300);
+                }
+            } else {
+                setStatus('⚠️ أدخل الأوريكال أولاً', '#ffc107');
+            }
+        }
+    });
+
+    // Enter على السريل
+    serialInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            addEntry();
+        }
+    });
+
+    // Ctrl+Enter لحفظ الاستمارة
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            saveForm();
+        }
+    });
+
+    // ===== تبديل الوضع التلقائي =====
+    autoIndicator.addEventListener('click', function() {
+        isAutoMode = !isAutoMode;
+        if (isAutoMode) {
+            this.innerHTML = '<span class="dot"></span> تلقائي';
+            this.style.background = '#e8f5e9';
+            this.style.color = '#2e7d32';
+            setStatus('✅ الوضع التلقائي مفعّل', '#0f973d');
+        } else {
+            this.innerHTML = '⏸️ يدوي';
+            this.style.background = '#fce4ec';
+            this.style.color = '#c62828';
+            setStatus('⏸️ الوضع التلقائي معطّل', '#dc3545');
+        }
+    });
+
+    // ===== جعل الدوال عالمية =====
+    window.removeEntry = removeEntry;
+    window.deleteForm = deleteForm;
+
+    // ===== تهيئة الصفحة =====
+    loadData();
+    focusOrical();
+    renderEntries();
+    setStatus('✅ جاهز - أضف الأرقام ثم احفظ الاستمارة', '#0f973d');
+
+    console.log('✅ نظام الاستمارات جاهز - المفتاح:', STORAGE_KEY);
+})();
+</script>
 
 </body>
 </html>
