@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>نظام استمارة العهدة</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
@@ -17,12 +17,13 @@
         body {
             font-family: 'Arial', 'Segoe UI', sans-serif;
             background: #e9ecef;
-            padding: 20px;
+            padding: 10px;
             direction: rtl;
             min-height: 100vh;
+            font-size: 14px;
         }
         .container {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
         }
 
@@ -30,32 +31,36 @@
         .toolbar {
             background: #1a2639;
             color: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch;
         }
         .toolbar h1 {
-            font-size: 20px;
+            font-size: 18px;
+            text-align: center;
         }
         .toolbar .actions {
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
         }
         .btn {
-            padding: 8px 20px;
+            padding: 8px 14px;
             border: none;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             color: white;
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
         }
         .btn:hover {
             transform: translateY(-2px);
@@ -84,53 +89,43 @@
         /* ===== Main Grid ===== */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-        }
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
 
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
         }
         .card-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             color: #1a2639;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
             border-bottom: 2px solid #f0f2f5;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         .card-title .badge {
             background: #3b7cff;
             color: white;
-            padding: 2px 14px;
+            padding: 2px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         /* ===== Form ===== */
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 10px;
         }
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        @media (max-width: 500px) {
+        @media (max-width: 480px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
@@ -143,24 +138,27 @@
         .form-group label {
             font-weight: 600;
             color: #1a2639;
-            font-size: 12px;
-            margin-bottom: 3px;
+            font-size: 11px;
+            margin-bottom: 2px;
         }
         .form-group label .en {
             font-weight: 400;
             color: #6c757d;
-            font-size: 10px;
-            margin-right: 4px;
+            font-size: 9px;
+            margin-right: 3px;
         }
         .form-group input,
         .form-group select {
-            padding: 8px 12px;
+            padding: 6px 10px;
             font-size: 13px;
             border: 2px solid #dce3ec;
             border-radius: 8px;
             transition: all 0.3s ease;
             background: #fafbfc;
             font-family: 'Arial', sans-serif;
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .form-group input:focus,
         .form-group select:focus {
@@ -172,29 +170,38 @@
             background: #f0f2f5;
             color: #666;
         }
+        .form-group input[readonly] {
+            background: #f0f2f5;
+            color: #333;
+        }
 
         /* ===== Scanner ===== */
         .scanner-section {
             background: #f0f7ff;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
             border: 2px solid #b8d4f0;
         }
         .scanner-row {
             display: flex;
-            gap: 12px;
-            align-items: end;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 8px;
+        }
+        @media (min-width: 600px) {
+            .scanner-row {
+                flex-direction: row;
+                align-items: end;
+            }
         }
         .scanner-row .input-group {
             flex: 1;
-            min-width: 150px;
+            min-width: 0;
         }
         .scanner-row .input-group input {
             width: 100%;
-            padding: 10px 14px;
-            font-size: 15px;
+            padding: 8px 12px;
+            font-size: 14px;
             border: 2px solid #dce3ec;
             border-radius: 8px;
             font-family: 'Courier New', monospace;
@@ -214,32 +221,40 @@
             display: block;
             font-weight: 600;
             color: #1a2639;
-            font-size: 12px;
-            margin-bottom: 3px;
+            font-size: 11px;
+            margin-bottom: 2px;
         }
         .scanner-row .input-group label .en {
             font-weight: 400;
             color: #6c757d;
-            font-size: 10px;
+            font-size: 9px;
+        }
+        .scanner-row .btn {
+            flex: 0 0 auto;
+            padding: 8px 16px;
+            font-size: 13px;
+            min-width: 80px;
         }
         .scanner-status {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13px;
+            gap: 8px;
+            font-size: 12px;
             color: #1a2639;
-            padding: 6px 14px;
+            padding: 5px 12px;
             background: white;
             border-radius: 8px;
             border: 1px solid #dce3ec;
-            margin-top: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
         }
         .scanner-status .dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: #4caf50;
             animation: pulse 1.5s infinite;
+            flex-shrink: 0;
         }
         @keyframes pulse {
             0% {
@@ -255,17 +270,19 @@
 
         /* ===== Items Table ===== */
         .items-table-container {
-            margin-top: 15px;
+            margin-top: 10px;
             overflow-x: auto;
             border-radius: 10px;
             border: 1px solid #e9ecef;
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
+            min-width: 600px;
         }
         .items-table thead {
             background: #1a2639;
@@ -275,21 +292,22 @@
             z-index: 10;
         }
         .items-table th {
-            padding: 6px 8px;
+            padding: 5px 6px;
             text-align: center;
             font-weight: 600;
-            font-size: 10px;
+            font-size: 9px;
+            white-space: nowrap;
         }
         .items-table th .en {
             font-weight: 400;
-            font-size: 9px;
+            font-size: 8px;
             color: #aaa;
         }
         .items-table td {
-            padding: 5px 8px;
+            padding: 4px 6px;
             border-bottom: 1px solid #e9ecef;
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
         }
         .items-table tbody tr:hover {
             background: #f8f9fa;
@@ -298,10 +316,10 @@
             background: #dc3545;
             color: white;
             border: none;
-            padding: 2px 10px;
+            padding: 2px 8px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
         }
         .items-table .remove-btn:hover {
             background: #c82333;
@@ -309,22 +327,24 @@
         .empty-items {
             text-align: center;
             color: #999;
-            padding: 25px;
+            padding: 20px;
         }
 
         /* ===== Saved Forms Table ===== */
         .saved-forms-container {
-            margin-top: 15px;
+            margin-top: 10px;
             overflow-x: auto;
             border-radius: 10px;
             border: 1px solid #e9ecef;
-            max-height: 300px;
+            max-height: 250px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .saved-forms-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 11px;
+            min-width: 500px;
         }
         .saved-forms-table thead {
             background: #1a2639;
@@ -334,29 +354,30 @@
             z-index: 10;
         }
         .saved-forms-table th {
-            padding: 6px 8px;
+            padding: 5px 6px;
             text-align: center;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 10px;
+            white-space: nowrap;
         }
         .saved-forms-table td {
-            padding: 5px 8px;
+            padding: 4px 6px;
             border-bottom: 1px solid #e9ecef;
             text-align: center;
-            font-size: 11px;
+            font-size: 10px;
         }
         .saved-forms-table tbody tr:hover {
             background: #f8f9fa;
             cursor: pointer;
         }
         .saved-forms-table .action-btn {
-            padding: 2px 10px;
+            padding: 2px 8px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             color: white;
-            margin: 0 2px;
+            margin: 0 1px;
         }
         .saved-forms-table .action-btn.view-btn {
             background: #3b7cff;
@@ -375,7 +396,7 @@
         .upload-area {
             border: 2px dashed #dce3ec;
             border-radius: 10px;
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -389,96 +410,285 @@
             display: none;
         }
         .upload-area .upload-icon {
-            font-size: 30px;
+            font-size: 24px;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         .upload-area .upload-text {
-            font-size: 12px;
+            font-size: 11px;
             color: #666;
         }
         .upload-status {
-            font-size: 12px;
-            margin-top: 4px;
+            font-size: 11px;
+            margin-top: 3px;
         }
 
         /* ===== Status ===== */
         .status-bar {
             background: #f8f9fa;
-            padding: 8px 16px;
-            border-radius: 10px;
-            margin-top: 15px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-top: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
-            font-size: 13px;
+            gap: 5px;
+            font-size: 12px;
         }
         .status-bar .status-text {
             font-weight: 500;
         }
         .status-bar .last-scanned {
-            font-size: 12px;
+            font-size: 11px;
             color: #6c757d;
         }
 
-        /* ===== Actions ===== */
-        .actions-bar {
+        /* ===== Search ===== */
+        .search-row {
             display: flex;
-            gap: 10px;
+            gap: 6px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 2px solid #f0f2f5;
+        }
+        .search-row input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 2px solid #dce3ec;
+            border-radius: 8px;
+            font-size: 12px;
+            min-width: 120px;
+        }
+        .search-row input:focus {
+            outline: none;
+            border-color: #3b7cff;
+            box-shadow: 0 0 0 3px rgba(59, 124, 255, 0.1);
+        }
+        .search-row .btn {
+            flex: 0 0 auto;
+            padding: 6px 14px;
+            font-size: 12px;
+            min-width: 60px;
         }
 
-        /* ===== Preview ===== */
-        .preview-area {
-            margin-top: 10px;
-            padding: 12px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
-            max-height: 300px;
+        /* ===== Preview Overlay ===== */
+        .preview-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
             overflow-y: auto;
-            font-size: 12px;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch;
         }
-        .preview-area .preview-title {
+        .preview-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .preview-overlay .preview-content {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 100%;
+            width: 100%;
+            margin: 10px auto;
+            position: relative;
+        }
+        .preview-overlay .close-preview {
+            position: sticky;
+            top: 5px;
+            float: left;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            z-index: 10;
+            font-size: 13px;
+        }
+        .preview-overlay .close-preview:hover {
+            background: #c82333;
+        }
+
+        /* ===== Form Preview ===== */
+        .form-preview-container {
+            direction: rtl;
+            font-family: 'Arial', 'Segoe UI', sans-serif;
+            background: white;
+            padding: 0 3mm;
+            width: 100%;
+            overflow-x: auto;
+        }
+        .form-page {
+            width: 100%;
+            min-height: auto;
+            padding: 5mm 3mm;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+        .form-page:last-child {
+            margin-bottom: 0;
+        }
+
+        .page-header {
+            flex-shrink: 0;
+        }
+        .page-body {
+            flex: 1;
+            overflow: visible;
+        }
+        .page-footer {
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        .form-preview-container .form-id {
+            text-align: left;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        .form-preview-container .form-title {
+            text-align: center;
+            font-size: 18px;
             font-weight: 700;
-            color: #1a2639;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #1a2639;
+            padding-bottom: 8px;
         }
-        .preview-area table {
+        .form-preview-container .form-title .en {
+            font-weight: 400;
+            font-size: 14px;
+            color: #555;
+        }
+        .form-preview-container table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 11px;
+            margin: 0;
+            font-size: 10px;
         }
-        .preview-area table th {
-            background: #e9ecef;
-            padding: 4px 8px;
-            border: 1px solid #ddd;
+        .form-preview-container td,
+        .form-preview-container th {
+            border: 1.5px solid #000;
+            padding: 3px 4px;
+            text-align: center;
+            vertical-align: middle;
         }
-        .preview-area table td {
-            padding: 4px 8px;
-            border: 1px solid #ddd;
+        .form-preview-container .label-cell {
+            font-weight: 700;
+            background: #f5f5f5;
+            text-align: center;
+            font-size: 10px;
+            white-space: nowrap;
+            padding: 3px 4px;
+        }
+        .form-preview-container .data-cell {
+            text-align: center;
+            font-size: 10px;
+            padding: 3px 4px;
+            font-weight: 500;
+        }
+        .form-preview-container .en-text {
+            font-weight: 400;
+            color: #666;
+            font-size: 8px;
+        }
+        .form-preview-container .items-table th {
+            background: #f5f5f5;
+            font-weight: 700;
+            font-size: 9px;
+            padding: 3px 4px;
+            border: 1.5px solid #000;
+        }
+        .form-preview-container .items-table td {
+            font-size: 9px;
+            padding: 3px 4px;
+            border: 1.5px solid #000;
+            font-weight: 500;
+        }
+        .form-preview-container .signature-cell {
+            height: 55px;
+            vertical-align: middle;
+            padding: 3px 4px;
+            font-size: 9px;
+            border: 1.5px solid #000;
+        }
+        .form-preview-container .signature-cell strong {
+            font-size: 10px;
+            display: block;
+            margin-bottom: 1px;
+        }
+        .form-preview-container .signature-cell .sig-line-en {
+            font-size: 8px;
+            color: #888;
+            display: block;
+            margin-bottom: 1px;
+        }
+        .form-preview-container .sig-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            margin-top: 2px;
+            font-size: 9px;
+            color: #333;
+            flex-wrap: wrap;
+        }
+        .form-preview-container .sig-row .label-text {
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 9px;
+            min-width: 55px;
+            text-align: right;
+        }
+        .form-preview-container .sig-dotted-short {
+            display: inline-block;
+            min-width: 60px;
+            border-bottom: 1.5px dotted #999;
+            padding: 0 2px;
+            min-height: 14px;
+            flex: 1;
+        }
+        .form-preview-container .custody-type {
+            font-weight: 700;
+            color: #1a2639;
+        }
+        .form-preview-container .table-gap {
+            margin-top: 4px;
+        }
+        .form-preview-container .table-gap-bottom {
+            margin-top: 5px;
         }
 
         /* ===== Toast ===== */
         .toast {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 20px;
+            right: 10px;
+            left: 10px;
             background: #1a2639;
             color: white;
-            padding: 12px 22px;
+            padding: 10px 16px;
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             z-index: 9998;
             display: none;
             max-width: 400px;
-            font-size: 14px;
+            margin: 0 auto;
+            font-size: 13px;
             animation: slideUp 0.3s ease;
+            text-align: center;
         }
         @keyframes slideUp {
             from {
@@ -503,206 +713,7 @@
             border-right: 4px solid #dc3545;
         }
 
-        /* ===== نموذج الاستمارة ===== */
-        .preview-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        .preview-overlay.active {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .preview-overlay .preview-content {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 297mm;
-            width: 100%;
-            margin: 20px auto;
-            position: relative;
-        }
-        .preview-overlay .close-preview {
-            position: sticky;
-            top: 10px;
-            float: left;
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            z-index: 10;
-        }
-        .preview-overlay .close-preview:hover {
-            background: #c82333;
-        }
-
-        /* ===== تصميم الصفحة A4 ===== */
-        .form-preview-container {
-            direction: rtl;
-            font-family: 'Arial', 'Segoe UI', sans-serif;
-            background: white;
-            padding: 0 6mm;
-            width: 100%;
-        }
-
-        .form-page {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 8mm 6mm;
-            margin: 0 auto;
-            page-break-after: always;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
-        }
-        .form-page:last-child {
-            page-break-after: avoid;
-            margin-bottom: 0;
-        }
-
-        .page-header {
-            flex-shrink: 0;
-        }
-        .page-body {
-            flex: 1;
-            overflow: visible;
-        }
-        .page-footer {
-            flex-shrink: 0;
-            margin-top: auto;
-        }
-
-        .form-preview-container .form-id {
-            text-align: left;
-            font-size: 15px;
-            color: #333;
-            margin-bottom: 4px;
-            font-weight: 600;
-            font-family: 'Courier New', monospace;
-        }
-        .form-preview-container .form-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            border-bottom: 3px solid #1a2639;
-            padding-bottom: 10px;
-        }
-        .form-preview-container .form-title .en {
-            font-weight: 400;
-            font-size: 18px;
-            color: #555;
-        }
-        .form-preview-container table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0;
-        }
-        .form-preview-container td,
-        .form-preview-container th {
-            border: 2px solid #000;
-            padding: 5px 7px;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .form-preview-container .label-cell {
-            font-weight: 700;
-            background: #f5f5f5;
-            text-align: center;
-            font-size: 12px;
-            white-space: nowrap;
-            padding: 4px 6px;
-        }
-        .form-preview-container .data-cell {
-            text-align: center;
-            font-size: 12px;
-            padding: 4px 6px;
-            font-weight: 500;
-        }
-        .form-preview-container .en-text {
-            font-weight: 400;
-            color: #666;
-            font-size: 9px;
-        }
-        .form-preview-container .items-table th {
-            background: #f5f5f5;
-            font-weight: 700;
-            font-size: 11px;
-            padding: 4px 6px;
-            border: 2px solid #000;
-        }
-        .form-preview-container .items-table td {
-            font-size: 11px;
-            padding: 4px 6px;
-            border: 2px solid #000;
-            font-weight: 500;
-        }
-        .form-preview-container .signature-cell {
-            height: 70px;
-            vertical-align: middle;
-            padding: 5px 6px;
-            font-size: 11px;
-            border: 2px solid #000;
-        }
-        .form-preview-container .signature-cell strong {
-            font-size: 12px;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .form-preview-container .signature-cell .sig-line-en {
-            font-size: 9px;
-            color: #888;
-            display: block;
-            margin-bottom: 1px;
-        }
-        .form-preview-container .sig-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
-            margin-top: 3px;
-            font-size: 11px;
-            color: #333;
-        }
-        .form-preview-container .sig-row .label-text {
-            white-space: nowrap;
-            font-weight: 500;
-            font-size: 11px;
-            min-width: 75px;
-            text-align: right;
-        }
-        .form-preview-container .sig-dotted-short {
-            display: inline-block;
-            min-width: 90px;
-            border-bottom: 2px dotted #999;
-            padding: 0 3px;
-            min-height: 18px;
-            flex: 1;
-        }
-        .form-preview-container .custody-type {
-            font-weight: 700;
-            color: #1a2639;
-        }
-        .form-preview-container .table-gap {
-            margin-top: 6px;
-        }
-        .form-preview-container .table-gap-bottom {
-            margin-top: 8px;
-        }
-
+        /* ===== Print ===== */
         @media print {
             .toolbar {
                 display: none !important;
@@ -730,8 +741,8 @@
             }
             .form-page {
                 width: 100%;
-                min-height: 100vh;
-                padding: 6mm 5mm;
+                min-height: auto;
+                padding: 4mm 3mm;
                 margin: 0;
                 page-break-after: always;
                 box-shadow: none;
@@ -742,14 +753,166 @@
             }
             body {
                 background: white;
+                padding: 0;
+            }
+            .no-print {
+                display: none !important;
             }
         }
 
-        @media screen and (max-width: 800px) {
+        /* ===== Mobile specific ===== */
+        @media (max-width: 480px) {
+            .toolbar h1 {
+                font-size: 16px;
+            }
+            .btn {
+                font-size: 11px;
+                padding: 6px 10px;
+                min-width: 50px;
+            }
+            .card {
+                padding: 10px;
+            }
+            .form-group label {
+                font-size: 10px;
+            }
+            .form-group input,
+            .form-group select {
+                font-size: 12px;
+                padding: 5px 8px;
+            }
+            .scanner-row .input-group input {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+            .items-table {
+                font-size: 10px;
+                min-width: 500px;
+            }
+            .items-table th {
+                font-size: 8px;
+                padding: 4px 4px;
+            }
+            .items-table td {
+                font-size: 9px;
+                padding: 3px 4px;
+            }
+            .saved-forms-table {
+                font-size: 10px;
+                min-width: 400px;
+            }
+            .saved-forms-table th {
+                font-size: 9px;
+                padding: 4px 4px;
+            }
+            .saved-forms-table td {
+                font-size: 9px;
+                padding: 3px 4px;
+            }
+            .saved-forms-table .action-btn {
+                font-size: 9px;
+                padding: 2px 6px;
+            }
+            .search-row input {
+                font-size: 11px;
+                padding: 5px 8px;
+            }
+            .preview-overlay .preview-content {
+                padding: 5px;
+            }
+            .form-preview-container .form-title {
+                font-size: 15px;
+            }
+            .form-preview-container .form-title .en {
+                font-size: 12px;
+            }
+            .form-preview-container table {
+                font-size: 8px;
+            }
+            .form-preview-container .label-cell {
+                font-size: 8px;
+                padding: 2px 3px;
+            }
+            .form-preview-container .data-cell {
+                font-size: 8px;
+                padding: 2px 3px;
+            }
+            .form-preview-container .items-table th {
+                font-size: 7px;
+                padding: 2px 3px;
+            }
+            .form-preview-container .items-table td {
+                font-size: 7px;
+                padding: 2px 3px;
+            }
+            .form-preview-container .signature-cell {
+                height: 45px;
+                padding: 2px 3px;
+                font-size: 8px;
+            }
+            .form-preview-container .signature-cell strong {
+                font-size: 9px;
+            }
+            .form-preview-container .sig-row {
+                font-size: 8px;
+            }
+            .form-preview-container .sig-row .label-text {
+                font-size: 8px;
+                min-width: 40px;
+            }
+            .form-preview-container .sig-dotted-short {
+                min-width: 40px;
+            }
+            .toast {
+                font-size: 12px;
+                padding: 8px 14px;
+                bottom: 10px;
+                right: 5px;
+                left: 5px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .form-page {
+                width: 210mm;
+                min-height: 297mm;
+                padding: 8mm 6mm;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin-bottom: 10px;
+            }
+            .form-preview-container table {
+                font-size: 11px;
+            }
+            .form-preview-container .label-cell {
+                font-size: 11px;
+            }
+            .form-preview-container .data-cell {
+                font-size: 11px;
+            }
+            .form-preview-container .items-table th {
+                font-size: 10px;
+            }
+            .form-preview-container .items-table td {
+                font-size: 10px;
+            }
+            .form-preview-container .signature-cell {
+                height: 65px;
+                font-size: 10px;
+            }
+            .form-preview-container .signature-cell strong {
+                font-size: 11px;
+            }
+        }
+
+        @media print and (min-width: 768px) {
             .form-page {
                 width: 100%;
-                min-height: auto;
-                padding: 10px;
+                min-height: 100vh;
+                padding: 6mm 5mm;
+                box-shadow: none;
             }
         }
     </style>
@@ -761,10 +924,10 @@
         <div class="toolbar">
             <h1>📋 نظام استمارة العهدة</h1>
             <div class="actions">
-                <button class="btn btn-success" id="saveFormBtn">💾 حفظ الاستمارة</button>
-                <button class="btn btn-info" id="exportPdfBtn">📄 تصدير PDF</button>
+                <button class="btn btn-success" id="saveFormBtn">💾 حفظ</button>
+                <button class="btn btn-info" id="exportPdfBtn">📄 PDF</button>
                 <button class="btn btn-primary" id="previewFormBtn">👁️ معاينة</button>
-                <button class="btn btn-secondary" id="clearFormBtn">🔄 استمارة جديدة</button>
+                <button class="btn btn-secondary" id="clearFormBtn">🔄 جديد</button>
             </div>
         </div>
 
@@ -841,35 +1004,35 @@
                             <label>📟 الرقم التسلسلي <span class="en">Serial No.</span></label>
                             <input type="text" id="serialInput" placeholder="امسح السريل..." disabled />
                         </div>
-                        <button class="btn btn-success" id="addItemBtn" style="margin-bottom:2px;">➕ إضافة</button>
+                        <button class="btn btn-success" id="addItemBtn">➕ إضافة</button>
                     </div>
                     <div class="scanner-status">
                         <span class="dot"></span>
-                        <span id="scannerStatusText">القارئ جاهز - امسح الأوريكال أولاً</span>
+                        <span id="scannerStatusText">القارئ جاهز - امسح الأوريكال</span>
                         <span id="scannerHint" style="color:#3b7cff;font-weight:600;margin-right:auto;">التركيز: الأوريكال</span>
                     </div>
                 </div>
 
                 <!-- ===== Items Table ===== -->
-                <div style="margin-top:15px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-                        <span style="font-weight:700;color:#1a2639;">📦 الأصناف المسجلة</span>
-                        <span style="font-size:13px;color:#6c757d;">عدد الأصناف: <span id="itemsCount">0</span></span>
+                <div style="margin-top:10px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:5px;margin-bottom:8px;">
+                        <span style="font-weight:700;color:#1a2639;font-size:13px;">📦 الأصناف المسجلة</span>
+                        <span style="font-size:12px;color:#6c757d;">عدد الأصناف: <span id="itemsCount">0</span></span>
                     </div>
                     <div class="items-table-container">
                         <table class="items-table">
                             <thead>
                                 <tr>
-                                    <th style="width:4%;">م</th>
-                                    <th style="width:11%;">رمز الصنف/<br /><span class="en">Item code</span></th>
-                                    <th style="width:15%;">اسم الصنف</th>
-                                    <th style="width:6%;">الكمية/<br /><span class="en">Qty</span></th>
-                                    <th style="width:11%;">رقم الموديل/<br /><span class="en">Model No.</span></th>
-                                    <th style="width:15%;">الرقم التسلسلي للمنتج /<br /><span class="en">Serial No</span></th>
-                                    <th style="width:5%;">سعر العهدة<br /><span class="en">Price</span></th>
-                                    <th style="width:5%;">فلس<br /><span class="en">Fils</span></th>
-                                    <th style="width:13%;">توقيع صاحب العهدة/<br /><span class="en">custodian signature</span></th>
-                                    <th style="width:5%;">حذف</th>
+                                    <th>م</th>
+                                    <th>رمز الصنف/<br /><span class="en">Item code</span></th>
+                                    <th>اسم الصنف</th>
+                                    <th>الكمية/<br /><span class="en">Qty</span></th>
+                                    <th>الموديل/<br /><span class="en">Model No.</span></th>
+                                    <th>الرقم التسلسلي/<br /><span class="en">Serial No</span></th>
+                                    <th>السعر/<br /><span class="en">Price</span></th>
+                                    <th>فلس/<br /><span class="en">Fils</span></th>
+                                    <th>توقيع صاحب العهدة</th>
+                                    <th>حذف</th>
                                 </tr>
                             </thead>
                             <tbody id="itemsTableBody">
@@ -895,10 +1058,10 @@
                 </div>
 
                 <!-- ===== Search ===== -->
-                <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
-                    <input type="text" id="searchInput" placeholder="🔍 بحث برقم الاستمارة أو اسم المستلم..." style="flex:1; padding:8px 12px; border:2px solid #dce3ec; border-radius:8px; font-size:13px;" />
-                    <button class="btn btn-primary" id="searchBtn">🔍 بحث</button>
-                    <button class="btn btn-secondary" id="clearSearchBtn">✕ مسح</button>
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="🔍 بحث برقم الاستمارة أو الاسم..." />
+                    <button class="btn btn-primary" id="searchBtn">بحث</button>
+                    <button class="btn btn-secondary" id="clearSearchBtn">مسح</button>
                 </div>
 
                 <!-- ===== Saved Forms Table ===== -->
@@ -906,13 +1069,13 @@
                     <table class="saved-forms-table">
                         <thead>
                             <tr>
-                                <th style="width:5%;">#</th>
-                                <th style="width:15%;">رقم الاستمارة</th>
-                                <th style="width:20%;">اسم المستلم</th>
-                                <th style="width:15%;">الجهة</th>
-                                <th style="width:10%;">عدد الأصناف</th>
-                                <th style="width:15%;">التاريخ</th>
-                                <th style="width:20%;">الإجراءات</th>
+                                <th>#</th>
+                                <th>رقم الاستمارة</th>
+                                <th>اسم المستلم</th>
+                                <th>الجهة</th>
+                                <th>عدد الأصناف</th>
+                                <th>التاريخ</th>
+                                <th>الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="savedFormsBody">
@@ -924,27 +1087,27 @@
                 </div>
 
                 <!-- ===== Upload ===== -->
-                <div style="margin-top:15px;">
-                    <label style="font-weight:600;color:#1a2639;font-size:14px;display:block;margin-bottom:8px;">
+                <div style="margin-top:12px;">
+                    <label style="font-weight:600;color:#1a2639;font-size:12px;display:block;margin-bottom:5px;">
                         📤 استيراد بيانات من Excel
                     </label>
                     <div class="upload-area" id="uploadCustodian">
                         <span class="upload-icon">📤</span>
                         <div class="upload-text">اضغط لرفع ملف Excel</div>
-                        <div style="font-size:11px;color:#999;margin-top:4px;">.xlsx, .xls</div>
+                        <div style="font-size:10px;color:#999;margin-top:3px;">.xlsx, .xls</div>
                         <input type="file" id="custodianFile" accept=".xlsx,.xls" />
                     </div>
                     <div class="upload-status" id="custodianFileStatus"></div>
                 </div>
 
-                <div style="margin-top:10px;">
-                    <label style="font-weight:600;color:#1a2639;font-size:14px;display:block;margin-bottom:8px;">
+                <div style="margin-top:8px;">
+                    <label style="font-weight:600;color:#1a2639;font-size:12px;display:block;margin-bottom:5px;">
                         📦 كتالوج الأصناف
                     </label>
                     <div class="upload-area" id="uploadItems">
                         <span class="upload-icon">📤</span>
                         <div class="upload-text">اضغط لرفع ملف Excel</div>
-                        <div style="font-size:11px;color:#999;margin-top:4px;">.xlsx, .xls</div>
+                        <div style="font-size:10px;color:#999;margin-top:3px;">.xlsx, .xls</div>
                         <input type="file" id="itemsFile" accept=".xlsx,.xls" />
                     </div>
                     <div class="upload-status" id="itemsFileStatus"></div>
@@ -958,8 +1121,8 @@
         <div class="preview-content">
             <button class="close-preview" id="closePreview">✕ إغلاق</button>
             <div id="previewFormContainer" class="form-preview-container"></div>
-            <div style="text-align:center;margin-top:15px;direction:ltr;">
-                <button onclick="window.print()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:8px;margin:0 5px;">🖨️ طباعة</button>
+            <div style="text-align:center;margin-top:10px;direction:ltr;" class="no-print">
+                <button onclick="window.print()" style="padding:6px 20px;font-size:13px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:6px;margin:0 4px;">🖨️ طباعة</button>
             </div>
         </div>
     </div>
@@ -1012,8 +1175,6 @@
 
             const custodianFile = document.getElementById('custodianFile');
             const itemsFile = document.getElementById('itemsFile');
-            const custodianPreview = document.getElementById('custodianPreview');
-            const itemsPreview = document.getElementById('itemsPreview');
             const custodianFileStatus = document.getElementById('custodianFileStatus');
             const itemsFileStatus = document.getElementById('itemsFileStatus');
             const uploadCustodian = document.getElementById('uploadCustodian');
@@ -1023,9 +1184,8 @@
             let items = [];
             let itemsCatalog = [];
             let savedForms = [];
-            let currentViewForm = null;
             const ROWS_PER_PAGE = 5;
-            const STORAGE_KEY = 'CUSTODY_FORMS';
+            const STORAGE_KEY = 'CUSTODY_FORMS_MOBILE';
 
             // ===== Toast =====
             function showToast(message, type = 'success') {
@@ -1035,7 +1195,7 @@
                 clearTimeout(toast._timeout);
                 toast._timeout = setTimeout(() => {
                     toast.classList.remove('show');
-                }, 4000);
+                }, 3500);
             }
 
             // ===== تعيين الحالة =====
@@ -1276,7 +1436,6 @@
                     timestamp: new Date().toISOString()
                 };
 
-                // التحقق من عدم التكرار
                 const exists = savedForms.some(f => f.id === formData.id);
                 if (exists) {
                     if (!confirm(`⚠️ استمارة برقم ${formData.id} موجودة بالفعل. هل تريد استبدالها؟`)) {
@@ -1291,7 +1450,6 @@
                 showToast(`✅ تم حفظ الاستمارة رقم ${formData.id}`, 'success');
                 setStatus(`✅ تم حفظ الاستمارة ${formData.id}`, '#0f973d');
 
-                // تنظيف النموذج لاستمارة جديدة
                 clearFormData();
             }
 
@@ -1318,7 +1476,6 @@
                 focusItemCode();
                 showToast(`📂 تم تحميل الاستمارة رقم ${formData.id}`, 'success');
                 setStatus(`📂 تم تحميل الاستمارة ${formData.id}`, '#3b7cff');
-                // إغلاق المعاينة إذا كانت مفتوحة
                 previewOverlay.classList.remove('active');
                 document.body.style.overflow = '';
             }
@@ -1340,15 +1497,12 @@
             // =============================================
 
             function viewForm(formData) {
-                currentViewForm = formData;
-                // تعبئة البيانات المؤقتة للمعاينة
-                const tempItems = items;
-                items = JSON.parse(JSON.stringify(formData.items || []));
                 const htmlContent = generateFormHTML(formData);
-                items = tempItems;
                 previewFormContainer.innerHTML = htmlContent;
                 previewOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                // Scroll to top of overlay
+                previewOverlay.scrollTop = 0;
             }
 
             // =============================================
@@ -1368,35 +1522,36 @@
                         <html dir="rtl">
                         <head>
                             <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <title>استمارة عهدة - ${formData.id}</title>
                             <style>
                                 * { margin: 0; padding: 0; box-sizing: border-box; }
-                                body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 0; background: white; direction: rtl; }
-                                .form-page { width: 210mm; min-height: 297mm; padding: 8mm 6mm; margin: 0 auto; display: flex; flex-direction: column; background: white; }
+                                body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 5mm; background: white; direction: rtl; }
+                                .form-page { width: 100%; min-height: auto; padding: 4mm 3mm; margin: 0 auto; display: flex; flex-direction: column; background: white; }
                                 .page-header { flex-shrink: 0; }
                                 .page-body { flex: 1; overflow: visible; }
                                 .page-footer { flex-shrink: 0; margin-top: auto; }
-                                .form-id { text-align: left; font-size: 15px; color: #333; margin-bottom: 4px; font-weight: 600; font-family: 'Courier New', monospace; }
-                                .form-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 14px; border-bottom: 3px solid #1a2639; padding-bottom: 10px; }
-                                .form-title .en { font-weight: 400; font-size: 18px; color: #555; }
-                                table { width: 100%; border-collapse: collapse; margin: 0; }
-                                td, th { border: 2px solid #000; padding: 5px 7px; text-align: center; vertical-align: middle; }
-                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 12px; white-space: nowrap; padding: 4px 6px; }
-                                .data-cell { text-align: center; font-size: 12px; padding: 4px 6px; font-weight: 500; }
-                                .en-text { font-weight: 400; color: #666; font-size: 9px; }
-                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 11px; padding: 4px 6px; border: 2px solid #000; }
-                                .items-table td { font-size: 11px; padding: 4px 6px; border: 2px solid #000; font-weight: 500; }
-                                .signature-cell { height: 70px; vertical-align: middle; padding: 5px 6px; font-size: 11px; border: 2px solid #000; }
-                                .signature-cell strong { font-size: 12px; display: block; margin-bottom: 2px; }
-                                .signature-cell .sig-line-en { font-size: 9px; color: #888; display: block; margin-bottom: 1px; }
-                                .sig-row { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 3px; font-size: 11px; color: #333; }
-                                .sig-row .label-text { white-space: nowrap; font-weight: 500; font-size: 11px; min-width: 75px; text-align: right; }
-                                .sig-dotted-short { display: inline-block; min-width: 90px; border-bottom: 2px dotted #999; padding: 0 3px; min-height: 18px; flex: 1; }
+                                .form-id { text-align: left; font-size: 13px; color: #333; margin-bottom: 3px; font-weight: 600; font-family: 'Courier New', monospace; }
+                                .form-title { text-align: center; font-size: 18px; font-weight: 700; margin-bottom: 10px; border-bottom: 2px solid #1a2639; padding-bottom: 8px; }
+                                .form-title .en { font-weight: 400; font-size: 14px; color: #555; }
+                                table { width: 100%; border-collapse: collapse; margin: 0; font-size: 10px; }
+                                td, th { border: 1.5px solid #000; padding: 3px 4px; text-align: center; vertical-align: middle; }
+                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 10px; white-space: nowrap; padding: 3px 4px; }
+                                .data-cell { text-align: center; font-size: 10px; padding: 3px 4px; font-weight: 500; }
+                                .en-text { font-weight: 400; color: #666; font-size: 8px; }
+                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 9px; padding: 3px 4px; border: 1.5px solid #000; }
+                                .items-table td { font-size: 9px; padding: 3px 4px; border: 1.5px solid #000; font-weight: 500; }
+                                .signature-cell { height: 55px; vertical-align: middle; padding: 3px 4px; font-size: 9px; border: 1.5px solid #000; }
+                                .signature-cell strong { font-size: 10px; display: block; margin-bottom: 1px; }
+                                .signature-cell .sig-line-en { font-size: 8px; color: #888; display: block; margin-bottom: 1px; }
+                                .sig-row { display: flex; justify-content: center; align-items: center; gap: 3px; margin-top: 2px; font-size: 9px; color: #333; flex-wrap: wrap; }
+                                .sig-row .label-text { white-space: nowrap; font-weight: 500; font-size: 9px; min-width: 55px; text-align: right; }
+                                .sig-dotted-short { display: inline-block; min-width: 60px; border-bottom: 1.5px dotted #999; padding: 0 2px; min-height: 14px; flex: 1; }
                                 .custody-type { font-weight: 700; color: #1a2639; }
-                                .table-gap { margin-top: 6px; }
-                                .table-gap-bottom { margin-top: 8px; }
+                                .table-gap { margin-top: 4px; }
+                                .table-gap-bottom { margin-top: 5px; }
                                 @media print {
-                                    .form-page { margin: 0; page-break-after: always; width: 100%; min-height: 100vh; }
+                                    .form-page { page-break-after: always; }
                                     .form-page:last-child { page-break-after: avoid; }
                                     .no-print { display: none !important; }
                                 }
@@ -1406,9 +1561,9 @@
                             <div class="form-preview-container" style="padding:0;">
                                 ${htmlContent}
                             </div>
-                            <div class="no-print" style="text-align:center;margin-top:15px;direction:ltr;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a2639;padding:10px 20px;border-radius:10px;z-index:999;">
-                                <button onclick="window.print()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:8px;margin:0 5px;">🖨️ طباعة</button>
-                                <button onclick="window.close()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#dc3545;color:white;border-radius:8px;margin:0 5px;">✕ إغلاق</button>
+                            <div class="no-print" style="text-align:center;margin-top:10px;direction:ltr;position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:#1a2639;padding:8px 15px;border-radius:8px;z-index:999;">
+                                <button onclick="window.print()" style="padding:5px 18px;font-size:12px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:6px;margin:0 4px;">🖨️ طباعة</button>
+                                <button onclick="window.close()" style="padding:5px 18px;font-size:12px;cursor:pointer;border:none;background:#dc3545;color:white;border-radius:6px;margin:0 4px;">✕ إغلاق</button>
                             </div>
                         </body>
                         </html>
@@ -1549,7 +1704,7 @@
 
                     if (pageItems.length === 0) {
                         itemsHtml =
-                            `<tr><td colspan="9" style="text-align:center;padding:15px;color:#999;">لا توجد أصناف</td></tr>`;
+                            `<tr><td colspan="9" style="text-align:center;padding:12px;color:#999;">لا توجد أصناف</td></tr>`;
                     } else {
                         pageItems.forEach((item, idx) => {
                             const globalIndex = startIndex + idx + 1;
@@ -1557,15 +1712,15 @@
                             const filsVal = item.fils || '000';
                             itemsHtml += `
                                     <tr>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${globalIndex}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.itemCode || '5996-AU-0000007'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.itemName || '75 Standard Standing Kiosk Display'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">1</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.modelNo || 'RD75l-TV'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.serial || '-'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${priceVal}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${filsVal}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">.........................</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">${globalIndex}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">${item.itemCode || '5996-AU-0000007'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">${item.itemName || '75 Standard Standing Kiosk Display'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">1</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">${item.modelNo || 'RD75l-TV'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">${item.serial || '-'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">${priceVal}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">${filsVal}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:9px;">.........................</td>
                                     </tr>
                                 `;
                         });
@@ -1718,6 +1873,12 @@
                 reader.readAsArrayBuffer(file);
             }
 
+            // عناصر المعاينة
+            const custodianPreview = document.createElement('div');
+            custodianPreview.id = 'custodianPreview';
+            const itemsPreview = document.createElement('div');
+            itemsPreview.id = 'itemsPreview';
+
             uploadCustodian.addEventListener('click', () => custodianFile.click());
 
             custodianFile.addEventListener('change', function(e) {
@@ -1748,12 +1909,6 @@
                             if (!isNaN(d)) issueDate.value = d.toISOString().split('T')[0];
                         }
 
-                        let html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 15px;font-size:12px;">';
-                        Object.keys(row).forEach(key => {
-                            html += `<div><strong>${key}:</strong></div><div>${row[key] || '-'}</div>`;
-                        });
-                        html += '</div>';
-                        document.getElementById('custodianPreview').innerHTML = html;
                         custodianFileStatus.textContent = `✅ تم رفع: ${file.name}`;
                         custodianFileStatus.style.color = '#0f973d';
                         showToast('✅ تم رفع بيانات صاحب العهدة', 'success');
@@ -1779,29 +1934,6 @@
                             fils: String(row['فلس'] || row['Fils'] || '000').trim()
                         })).filter(i => i.itemCode);
 
-                        let html = `<table>
-                                <tr style="background:#e9ecef;">
-                                    <th style="padding:5px;border:1px solid #ddd;">رمز الصنف</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">اسم الصنف</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">الموديل</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">الدينار</th>
-                                    <th style="padding:5px;border:1px solid #ddd;">فلس</th>
-                                </tr>`;
-                        itemsCatalog.slice(0, 10).forEach(item => {
-                            html += `<tr>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.itemCode}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.itemName}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.modelNo}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.price}</td>
-                                    <td style="padding:5px;border:1px solid #ddd;">${item.fils}</td>
-                                </tr>`;
-                        });
-                        if (itemsCatalog.length > 10) {
-                            html +=
-                                `<tr><td colspan="5" style="padding:5px;text-align:center;color:#999;">... و ${itemsCatalog.length - 10} صنف إضافي</td></tr>`;
-                        }
-                        html += '</table>';
-                        document.getElementById('itemsPreview').innerHTML = html;
                         itemsFileStatus.textContent = `✅ تم رفع: ${file.name} (${itemsCatalog.length} صنف)`;
                         itemsFileStatus.style.color = '#0f973d';
                         showToast(`✅ تم رفع ${itemsCatalog.length} صنف`, 'success');
@@ -1973,7 +2105,7 @@
             setStatus('✅ جاهز - امسح الأوريكال', '#0f973d');
             showToast('✅ النظام جاهز', 'success');
 
-            console.log('✅ نظام استمارة العهدة جاهز - مع حفظ وبحث وعرض');
+            console.log('✅ نظام استمارة العهدة جاهز - متوافق مع الهاتف المحمول');
         })();
     </script>
 
