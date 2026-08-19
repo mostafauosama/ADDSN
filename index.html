@@ -522,7 +522,7 @@
             background: #c82333;
         }
 
-        /* ===== Form Preview - متوافق مع الجوال والطباعة ===== */
+        /* ===== Form Preview - تنسيق A4 صحيح ===== */
         .form-preview-container {
             direction: rtl;
             font-family: 'Arial', 'Segoe UI', sans-serif;
@@ -532,7 +532,6 @@
             overflow-x: auto;
         }
 
-        /* ===== كل صفحة في المعاينة ===== */
         .form-page {
             width: 100%;
             max-width: 210mm;
@@ -726,6 +725,7 @@
 
         /* ===== الطباعة - تنسيق A4 صحيح ===== */
         @media print {
+            /* إخفاء عناصر التحكم */
             .toolbar {
                 display: none !important;
             }
@@ -749,8 +749,9 @@
             }
             .form-preview-container {
                 padding: 0;
+                overflow: visible;
             }
-            /* تنسيق A4 للطباعة */
+            /* تنسيق A4 للطباعة - صفحة واحدة */
             .form-page {
                 width: 210mm;
                 min-height: 297mm;
@@ -761,6 +762,8 @@
                 border-radius: 0 !important;
                 box-shadow: none !important;
                 background: white;
+                display: flex;
+                flex-direction: column;
             }
             .form-page:last-child {
                 page-break-after: avoid;
@@ -831,6 +834,11 @@
             }
             .form-preview-container .table-gap-bottom {
                 margin-top: 8px;
+            }
+            /* إجبار الصفحة على A4 */
+            @page {
+                size: A4 portrait;
+                margin: 10mm 8mm;
             }
         }
 
@@ -1510,6 +1518,7 @@
                             <style>
                                 * { margin: 0; padding: 0; box-sizing: border-box; }
                                 body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 0; background: white; direction: rtl; }
+                                /* تنسيق الصفحة A4 */
                                 .form-page {
                                     width: 210mm;
                                     min-height: 297mm;
@@ -1543,10 +1552,16 @@
                                 .custody-type { font-weight: 700; color: #1a2639; }
                                 .table-gap { margin-top: 6px; }
                                 .table-gap-bottom { margin-top: 8px; }
+                                /* إعدادات الطباعة */
+                                @page {
+                                    size: A4 portrait;
+                                    margin: 10mm 8mm;
+                                }
                                 @media print {
                                     .form-page { margin: 0; page-break-after: always; width: 100%; min-height: 100vh; }
                                     .form-page:last-child { page-break-after: avoid; }
                                     .no-print { display: none !important; }
+                                    body { padding: 0; margin: 0; }
                                 }
                             </style>
                         </head>
