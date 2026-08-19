@@ -2,10 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>نظام استمارة العهدة</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js">
     </script>
 
     <style>
@@ -17,44 +19,50 @@
         body {
             font-family: 'Arial', 'Segoe UI', sans-serif;
             background: #e9ecef;
-            padding: 20px;
+            padding: 10px;
             direction: rtl;
             min-height: 100vh;
+            font-size: 14px;
         }
         .container {
-            max-width: 1400px;
+            max-width: 100%;
             margin: 0 auto;
         }
 
+        /* ===== Toolbar ===== */
         .toolbar {
             background: #1a2639;
             color: white;
-            padding: 15px 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
+            flex-direction: column;
+            gap: 8px;
+            align-items: stretch;
         }
         .toolbar h1 {
-            font-size: 20px;
+            font-size: 16px;
+            text-align: center;
         }
         .toolbar .actions {
             display: flex;
-            gap: 10px;
             flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
         }
         .btn {
-            padding: 8px 20px;
+            padding: 6px 12px;
             border: none;
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             color: white;
+            flex: 1;
+            min-width: 50px;
+            text-align: center;
         }
         .btn:hover {
             transform: translateY(-2px);
@@ -80,54 +88,51 @@
             background: #6c757d;
         }
 
+        /* ===== Main Grid ===== */
         .main-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
-        @media (max-width: 1024px) {
+        @media (min-width: 768px) {
             .main-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
         }
 
         .card {
             background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
         }
         .card-title {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 700;
             color: #1a2639;
-            margin-bottom: 20px;
-            padding-bottom: 12px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #f0f2f5;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         .card-title .badge {
             background: #3b7cff;
             color: white;
-            padding: 2px 14px;
+            padding: 2px 10px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 10px;
         }
 
+        /* ===== Form ===== */
         .form-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px 15px;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 8px;
         }
-        @media (max-width: 768px) {
-            .form-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        @media (max-width: 500px) {
+        @media (max-width: 480px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
@@ -140,24 +145,27 @@
         .form-group label {
             font-weight: 600;
             color: #1a2639;
-            font-size: 12px;
-            margin-bottom: 3px;
+            font-size: 10px;
+            margin-bottom: 2px;
         }
         .form-group label .en {
             font-weight: 400;
             color: #6c757d;
-            font-size: 10px;
-            margin-right: 4px;
+            font-size: 8px;
+            margin-right: 3px;
         }
         .form-group input,
         .form-group select {
-            padding: 8px 12px;
-            font-size: 13px;
+            padding: 5px 8px;
+            font-size: 12px;
             border: 2px solid #dce3ec;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: all 0.3s ease;
             background: #fafbfc;
             font-family: 'Arial', sans-serif;
+            width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .form-group input:focus,
         .form-group select:focus {
@@ -169,30 +177,40 @@
             background: #f0f2f5;
             color: #666;
         }
+        .form-group input[readonly] {
+            background: #f0f2f5;
+            color: #333;
+        }
 
+        /* ===== Scanner ===== */
         .scanner-section {
             background: #f0f7ff;
-            border-radius: 12px;
-            padding: 15px;
-            margin: 15px 0;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 8px 0;
             border: 2px solid #b8d4f0;
         }
         .scanner-row {
             display: flex;
-            gap: 12px;
-            align-items: end;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 6px;
+        }
+        @media (min-width: 600px) {
+            .scanner-row {
+                flex-direction: row;
+                align-items: end;
+            }
         }
         .scanner-row .input-group {
             flex: 1;
-            min-width: 150px;
+            min-width: 0;
         }
         .scanner-row .input-group input {
             width: 100%;
-            padding: 10px 14px;
-            font-size: 15px;
+            padding: 6px 10px;
+            font-size: 13px;
             border: 2px solid #dce3ec;
-            border-radius: 8px;
+            border-radius: 6px;
             font-family: 'Courier New', monospace;
             background: white;
             letter-spacing: 1px;
@@ -210,32 +228,40 @@
             display: block;
             font-weight: 600;
             color: #1a2639;
-            font-size: 12px;
-            margin-bottom: 3px;
+            font-size: 10px;
+            margin-bottom: 2px;
         }
         .scanner-row .input-group label .en {
             font-weight: 400;
             color: #6c757d;
-            font-size: 10px;
+            font-size: 8px;
+        }
+        .scanner-row .btn {
+            flex: 0 0 auto;
+            padding: 6px 14px;
+            font-size: 12px;
+            min-width: 70px;
         }
         .scanner-status {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 13px;
+            gap: 6px;
+            font-size: 11px;
             color: #1a2639;
-            padding: 6px 14px;
+            padding: 4px 10px;
             background: white;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 1px solid #dce3ec;
-            margin-top: 10px;
+            margin-top: 6px;
+            flex-wrap: wrap;
         }
         .scanner-status .dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: #4caf50;
             animation: pulse 1.5s infinite;
+            flex-shrink: 0;
         }
         @keyframes pulse {
             0% {
@@ -249,18 +275,21 @@
             }
         }
 
+        /* ===== Items Table ===== */
         .items-table-container {
-            margin-top: 15px;
+            margin-top: 8px;
             overflow-x: auto;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid #e9ecef;
-            max-height: 300px;
+            max-height: 200px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 10px;
+            min-width: 500px;
         }
         .items-table thead {
             background: #1a2639;
@@ -270,21 +299,22 @@
             z-index: 10;
         }
         .items-table th {
-            padding: 6px 8px;
+            padding: 4px 5px;
             text-align: center;
             font-weight: 600;
-            font-size: 10px;
+            font-size: 8px;
+            white-space: nowrap;
         }
         .items-table th .en {
             font-weight: 400;
-            font-size: 9px;
+            font-size: 7px;
             color: #aaa;
         }
         .items-table td {
-            padding: 5px 8px;
+            padding: 3px 5px;
             border-bottom: 1px solid #e9ecef;
             text-align: center;
-            font-size: 11px;
+            font-size: 9px;
         }
         .items-table tbody tr:hover {
             background: #f8f9fa;
@@ -293,10 +323,10 @@
             background: #dc3545;
             color: white;
             border: none;
-            padding: 2px 10px;
-            border-radius: 4px;
+            padding: 2px 6px;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 9px;
         }
         .items-table .remove-btn:hover {
             background: #c82333;
@@ -304,21 +334,24 @@
         .empty-items {
             text-align: center;
             color: #999;
-            padding: 25px;
+            padding: 15px;
         }
 
+        /* ===== Saved Forms Table ===== */
         .saved-forms-container {
-            margin-top: 15px;
+            margin-top: 8px;
             overflow-x: auto;
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid #e9ecef;
-            max-height: 300px;
+            max-height: 200px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .saved-forms-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12px;
+            font-size: 10px;
+            min-width: 400px;
         }
         .saved-forms-table thead {
             background: #1a2639;
@@ -328,29 +361,30 @@
             z-index: 10;
         }
         .saved-forms-table th {
-            padding: 6px 8px;
+            padding: 4px 5px;
             text-align: center;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 9px;
+            white-space: nowrap;
         }
         .saved-forms-table td {
-            padding: 5px 8px;
+            padding: 3px 5px;
             border-bottom: 1px solid #e9ecef;
             text-align: center;
-            font-size: 11px;
+            font-size: 9px;
         }
         .saved-forms-table tbody tr:hover {
             background: #f8f9fa;
             cursor: pointer;
         }
         .saved-forms-table .action-btn {
-            padding: 2px 10px;
+            padding: 2px 6px;
             border: none;
-            border-radius: 4px;
+            border-radius: 3px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 9px;
             color: white;
-            margin: 0 2px;
+            margin: 0 1px;
         }
         .saved-forms-table .action-btn.view-btn {
             background: #3b7cff;
@@ -365,10 +399,11 @@
             opacity: 0.8;
         }
 
+        /* ===== Upload ===== */
         .upload-area {
             border: 2px dashed #dce3ec;
-            border-radius: 10px;
-            padding: 15px;
+            border-radius: 8px;
+            padding: 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -382,53 +417,290 @@
             display: none;
         }
         .upload-area .upload-icon {
-            font-size: 30px;
+            font-size: 20px;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
         .upload-area .upload-text {
-            font-size: 12px;
+            font-size: 10px;
             color: #666;
         }
         .upload-status {
-            font-size: 12px;
-            margin-top: 4px;
+            font-size: 10px;
+            margin-top: 2px;
         }
 
+        /* ===== Search ===== */
+        .search-row {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .search-row input {
+            flex: 1;
+            padding: 5px 8px;
+            border: 2px solid #dce3ec;
+            border-radius: 6px;
+            font-size: 11px;
+            min-width: 100px;
+        }
+        .search-row input:focus {
+            outline: none;
+            border-color: #3b7cff;
+            box-shadow: 0 0 0 3px rgba(59, 124, 255, 0.1);
+        }
+        .search-row .btn {
+            flex: 0 0 auto;
+            padding: 5px 12px;
+            font-size: 11px;
+            min-width: 50px;
+        }
+
+        /* ===== Status ===== */
         .status-bar {
             background: #f8f9fa;
-            padding: 8px 16px;
-            border-radius: 10px;
-            margin-top: 15px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            margin-top: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 8px;
-            font-size: 13px;
+            gap: 4px;
+            font-size: 11px;
         }
         .status-bar .status-text {
             font-weight: 500;
         }
         .status-bar .last-scanned {
-            font-size: 12px;
+            font-size: 10px;
             color: #6c757d;
         }
 
+        /* ===== Preview Overlay ===== */
+        .preview-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            overflow-y: auto;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .preview-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .preview-overlay .preview-content {
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 100%;
+            width: 100%;
+            margin: 10px auto;
+            position: relative;
+        }
+        .preview-overlay .close-preview {
+            position: sticky;
+            top: 5px;
+            float: left;
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            z-index: 10;
+            font-size: 12px;
+        }
+        .preview-overlay .close-preview:hover {
+            background: #c82333;
+        }
+
+        /* ===== Form Preview - تنسيق A4 صحيح ===== */
+        .form-preview-container {
+            direction: rtl;
+            font-family: 'Arial', 'Segoe UI', sans-serif;
+            background: white;
+            padding: 0;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .form-page {
+            width: 100%;
+            max-width: 210mm;
+            min-height: auto;
+            padding: 5mm 4mm;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .form-page:last-child {
+            margin-bottom: 0;
+        }
+
+        .page-header {
+            flex-shrink: 0;
+        }
+        .page-body {
+            flex: 1;
+            overflow: visible;
+        }
+        .page-footer {
+            flex-shrink: 0;
+            margin-top: auto;
+        }
+
+        .form-preview-container .form-id {
+            text-align: left;
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 3px;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        .form-preview-container .form-title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            border-bottom: 2px solid #1a2639;
+            padding-bottom: 6px;
+        }
+        .form-preview-container .form-title .en {
+            font-weight: 400;
+            font-size: 12px;
+            color: #555;
+        }
+        .form-preview-container table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            font-size: 9px;
+        }
+        .form-preview-container td,
+        .form-preview-container th {
+            border: 1.5px solid #000;
+            padding: 3px 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .form-preview-container .label-cell {
+            font-weight: 700;
+            background: #f5f5f5;
+            text-align: center;
+            font-size: 9px;
+            white-space: nowrap;
+            padding: 2px 3px;
+        }
+        .form-preview-container .data-cell {
+            text-align: center;
+            font-size: 9px;
+            padding: 2px 3px;
+            font-weight: 500;
+        }
+        .form-preview-container .en-text {
+            font-weight: 400;
+            color: #666;
+            font-size: 7px;
+        }
+        .form-preview-container .items-table th {
+            background: #f5f5f5;
+            font-weight: 700;
+            font-size: 8px;
+            padding: 2px 3px;
+            border: 1.5px solid #000;
+        }
+        .form-preview-container .items-table td {
+            font-size: 8px;
+            padding: 2px 3px;
+            border: 1.5px solid #000;
+            font-weight: 500;
+        }
+        .form-preview-container .signature-cell {
+            height: 45px;
+            vertical-align: middle;
+            padding: 2px 3px;
+            font-size: 8px;
+            border: 1.5px solid #000;
+        }
+        .form-preview-container .signature-cell strong {
+            font-size: 9px;
+            display: block;
+            margin-bottom: 1px;
+        }
+        .form-preview-container .signature-cell .sig-line-en {
+            font-size: 7px;
+            color: #888;
+            display: block;
+            margin-bottom: 1px;
+        }
+        .form-preview-container .sig-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2px;
+            margin-top: 1px;
+            font-size: 8px;
+            color: #333;
+            flex-wrap: wrap;
+        }
+        .form-preview-container .sig-row .label-text {
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 8px;
+            min-width: 40px;
+            text-align: right;
+        }
+        .form-preview-container .sig-dotted-short {
+            display: inline-block;
+            min-width: 40px;
+            border-bottom: 1.5px dotted #999;
+            padding: 0 2px;
+            min-height: 12px;
+            flex: 1;
+        }
+        .form-preview-container .custody-type {
+            font-weight: 700;
+            color: #1a2639;
+        }
+        .form-preview-container .table-gap {
+            margin-top: 3px;
+        }
+        .form-preview-container .table-gap-bottom {
+            margin-top: 4px;
+        }
+
+        /* ===== Toast ===== */
         .toast {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            bottom: 20px;
+            right: 10px;
+            left: 10px;
             background: #1a2639;
             color: white;
-            padding: 12px 22px;
-            border-radius: 10px;
+            padding: 8px 14px;
+            border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             z-index: 9998;
             display: none;
             max-width: 400px;
-            font-size: 14px;
+            margin: 0 auto;
+            font-size: 12px;
             animation: slideUp 0.3s ease;
+            text-align: center;
         }
         @keyframes slideUp {
             from {
@@ -453,204 +725,7 @@
             border-right: 4px solid #dc3545;
         }
 
-        .preview-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        .preview-overlay.active {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .preview-overlay .preview-content {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 297mm;
-            width: 100%;
-            margin: 20px auto;
-            position: relative;
-        }
-        .preview-overlay .close-preview {
-            position: sticky;
-            top: 10px;
-            float: left;
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            z-index: 10;
-        }
-        .preview-overlay .close-preview:hover {
-            background: #c82333;
-        }
-
-        .form-preview-container {
-            direction: rtl;
-            font-family: 'Arial', 'Segoe UI', sans-serif;
-            background: white;
-            padding: 0 6mm;
-            width: 100%;
-        }
-
-        .form-page {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 8mm 6mm;
-            margin: 0 auto;
-            page-break-after: always;
-            display: flex;
-            flex-direction: column;
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10px;
-        }
-        .form-page:last-child {
-            page-break-after: avoid;
-            margin-bottom: 0;
-        }
-
-        .page-header {
-            flex-shrink: 0;
-        }
-        .page-body {
-            flex: 1;
-            overflow: visible;
-        }
-        .page-footer {
-            flex-shrink: 0;
-            margin-top: auto;
-        }
-
-        .form-preview-container .form-id {
-            text-align: left;
-            font-size: 15px;
-            color: #333;
-            margin-bottom: 4px;
-            font-weight: 600;
-            font-family: 'Courier New', monospace;
-        }
-        .form-preview-container .form-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 14px;
-            border-bottom: 3px solid #1a2639;
-            padding-bottom: 10px;
-        }
-        .form-preview-container .form-title .en {
-            font-weight: 400;
-            font-size: 18px;
-            color: #555;
-        }
-        .form-preview-container table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0;
-        }
-        .form-preview-container td,
-        .form-preview-container th {
-            border: 2px solid #000;
-            padding: 5px 7px;
-            text-align: center;
-            vertical-align: middle;
-        }
-        .form-preview-container .label-cell {
-            font-weight: 700;
-            background: #f5f5f5;
-            text-align: center;
-            font-size: 12px;
-            white-space: nowrap;
-            padding: 4px 6px;
-        }
-        .form-preview-container .data-cell {
-            text-align: center;
-            font-size: 12px;
-            padding: 4px 6px;
-            font-weight: 500;
-        }
-        .form-preview-container .en-text {
-            font-weight: 400;
-            color: #666;
-            font-size: 9px;
-        }
-        .form-preview-container .items-table th {
-            background: #f5f5f5;
-            font-weight: 700;
-            font-size: 11px;
-            padding: 4px 6px;
-            border: 2px solid #000;
-        }
-        .form-preview-container .items-table td {
-            font-size: 11px;
-            padding: 4px 6px;
-            border: 2px solid #000;
-            font-weight: 500;
-        }
-        .form-preview-container .signature-cell {
-            height: 70px;
-            vertical-align: middle;
-            padding: 5px 6px;
-            font-size: 11px;
-            border: 2px solid #000;
-        }
-        .form-preview-container .signature-cell strong {
-            font-size: 12px;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .form-preview-container .signature-cell .sig-line-en {
-            font-size: 9px;
-            color: #888;
-            display: block;
-            margin-bottom: 1px;
-        }
-        .form-preview-container .sig-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 4px;
-            margin-top: 3px;
-            font-size: 11px;
-            color: #333;
-        }
-        .form-preview-container .sig-row .label-text {
-            white-space: nowrap;
-            font-weight: 500;
-            font-size: 11px;
-            min-width: 75px;
-            text-align: right;
-        }
-        .form-preview-container .sig-dotted-short {
-            display: inline-block;
-            min-width: 90px;
-            border-bottom: 2px dotted #999;
-            padding: 0 3px;
-            min-height: 18px;
-            flex: 1;
-        }
-        .form-preview-container .custody-type {
-            font-weight: 700;
-            color: #1a2639;
-        }
-        .form-preview-container .table-gap {
-            margin-top: 6px;
-        }
-        .form-preview-container .table-gap-bottom {
-            margin-top: 8px;
-        }
-
+        /* ===== الطباعة - تنسيق A4 صحيح ===== */
         @media print {
             .toolbar {
                 display: none !important;
@@ -675,29 +750,158 @@
             }
             .form-preview-container {
                 padding: 0;
+                overflow: visible;
             }
             .form-page {
-                width: 100%;
-                min-height: 100vh;
-                padding: 6mm 5mm;
-                margin: 0;
+                width: 210mm;
+                min-height: 297mm;
+                padding: 8mm 6mm;
+                margin: 0 auto;
                 page-break-after: always;
-                box-shadow: none;
-                border: none;
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                background: white;
+                display: flex;
+                flex-direction: column;
             }
             .form-page:last-child {
                 page-break-after: avoid;
             }
             body {
                 background: white;
+                padding: 0;
+                margin: 0;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .form-preview-container .form-id {
+                font-size: 14px;
+            }
+            .form-preview-container .form-title {
+                font-size: 20px;
+            }
+            .form-preview-container .form-title .en {
+                font-size: 16px;
+            }
+            .form-preview-container table {
+                font-size: 11px;
+            }
+            .form-preview-container .label-cell {
+                font-size: 11px;
+                padding: 4px 6px;
+            }
+            .form-preview-container .data-cell {
+                font-size: 11px;
+                padding: 4px 6px;
+            }
+            .form-preview-container .en-text {
+                font-size: 9px;
+            }
+            .form-preview-container .items-table th {
+                font-size: 10px;
+                padding: 4px 6px;
+            }
+            .form-preview-container .items-table td {
+                font-size: 10px;
+                padding: 4px 6px;
+            }
+            .form-preview-container .signature-cell {
+                height: 70px;
+                padding: 5px 6px;
+                font-size: 11px;
+            }
+            .form-preview-container .signature-cell strong {
+                font-size: 12px;
+            }
+            .form-preview-container .signature-cell .sig-line-en {
+                font-size: 9px;
+            }
+            .form-preview-container .sig-row {
+                font-size: 11px;
+            }
+            .form-preview-container .sig-row .label-text {
+                font-size: 11px;
+                min-width: 75px;
+            }
+            .form-preview-container .sig-dotted-short {
+                min-width: 90px;
+            }
+            .form-preview-container .table-gap {
+                margin-top: 6px;
+            }
+            .form-preview-container .table-gap-bottom {
+                margin-top: 8px;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 10mm 8mm;
             }
         }
 
-        @media screen and (max-width: 800px) {
+        @media screen and (max-width: 480px) {
             .form-page {
-                width: 100%;
-                min-height: auto;
-                padding: 10px;
+                padding: 3mm 2mm;
+                border: 1px solid #ddd;
+            }
+            .form-preview-container .form-id {
+                font-size: 10px;
+            }
+            .form-preview-container .form-title {
+                font-size: 13px;
+            }
+            .form-preview-container .form-title .en {
+                font-size: 10px;
+            }
+            .form-preview-container table {
+                font-size: 7px;
+            }
+            .form-preview-container .label-cell {
+                font-size: 7px;
+                padding: 1px 2px;
+            }
+            .form-preview-container .data-cell {
+                font-size: 7px;
+                padding: 1px 2px;
+            }
+            .form-preview-container .en-text {
+                font-size: 6px;
+            }
+            .form-preview-container .items-table th {
+                font-size: 6px;
+                padding: 1px 2px;
+            }
+            .form-preview-container .items-table td {
+                font-size: 6px;
+                padding: 1px 2px;
+            }
+            .form-preview-container .signature-cell {
+                height: 35px;
+                padding: 1px 2px;
+                font-size: 6px;
+            }
+            .form-preview-container .signature-cell strong {
+                font-size: 7px;
+            }
+            .form-preview-container .signature-cell .sig-line-en {
+                font-size: 6px;
+            }
+            .form-preview-container .sig-row {
+                font-size: 6px;
+            }
+            .form-preview-container .sig-row .label-text {
+                font-size: 6px;
+                min-width: 30px;
+            }
+            .form-preview-container .sig-dotted-short {
+                min-width: 30px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
             }
         }
     </style>
@@ -705,17 +909,20 @@
 <body>
 
     <div class="container">
+        <!-- ===== Toolbar ===== -->
         <div class="toolbar">
             <h1>📋 نظام استمارة العهدة</h1>
             <div class="actions">
-                <button class="btn btn-success" id="saveFormBtn">💾 حفظ الاستمارة</button>
-                <button class="btn btn-info" id="exportPdfBtn">📄 تصدير PDF</button>
+                <button class="btn btn-success" id="saveFormBtn">💾 حفظ</button>
+                <button class="btn btn-warning" id="exportWordBtn">📄 Word</button>
+                <button class="btn btn-info" id="exportPdfBtn">📄 PDF</button>
                 <button class="btn btn-primary" id="previewFormBtn">👁️ معاينة</button>
-                <button class="btn btn-secondary" id="clearFormBtn">🔄 استمارة جديدة</button>
+                <button class="btn btn-secondary" id="clearFormBtn">🔄 جديد</button>
             </div>
         </div>
 
         <div class="main-grid">
+            <!-- ===== الجانب الأيسر: الإدخال ===== -->
             <div class="card">
                 <div class="card-title">
                     📝 بيانات العهدة
@@ -776,6 +983,7 @@
                     </div>
                 </div>
 
+                <!-- ===== Scanner ===== -->
                 <div class="scanner-section">
                     <div class="scanner-row">
                         <div class="input-group">
@@ -786,34 +994,35 @@
                             <label>📟 الرقم التسلسلي <span class="en">Serial No.</span></label>
                             <input type="text" id="serialInput" placeholder="امسح السريل..." disabled />
                         </div>
-                        <button class="btn btn-success" id="addItemBtn" style="margin-bottom:2px;">➕ إضافة</button>
+                        <button class="btn btn-success" id="addItemBtn">➕ إضافة</button>
                     </div>
                     <div class="scanner-status">
                         <span class="dot"></span>
-                        <span id="scannerStatusText">القارئ جاهز - امسح الأوريكال أولاً</span>
+                        <span id="scannerStatusText">القارئ جاهز - امسح الأوريكال</span>
                         <span id="scannerHint" style="color:#3b7cff;font-weight:600;margin-right:auto;">التركيز: الأوريكال</span>
                     </div>
                 </div>
 
-                <div style="margin-top:15px;">
-                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
-                        <span style="font-weight:700;color:#1a2639;">📦 الأصناف المسجلة</span>
-                        <span style="font-size:13px;color:#6c757d;">عدد الأصناف: <span id="itemsCount">0</span></span>
+                <!-- ===== Items Table ===== -->
+                <div style="margin-top:8px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px;">
+                        <span style="font-weight:700;color:#1a2639;font-size:12px;">📦 الأصناف المسجلة</span>
+                        <span style="font-size:11px;color:#6c757d;">عدد الأصناف: <span id="itemsCount">0</span></span>
                     </div>
                     <div class="items-table-container">
                         <table class="items-table">
                             <thead>
                                 <tr>
-                                    <th style="width:4%;">م</th>
-                                    <th style="width:11%;">رمز الصنف/<br /><span class="en">Item code</span></th>
-                                    <th style="width:15%;">اسم الصنف</th>
-                                    <th style="width:6%;">الكمية/<br /><span class="en">Qty</span></th>
-                                    <th style="width:11%;">رقم الموديل/<br /><span class="en">Model No.</span></th>
-                                    <th style="width:15%;">الرقم التسلسلي للمنتج /<br /><span class="en">Serial No</span></th>
-                                    <th style="width:5%;">سعر العهدة<br /><span class="en">Price</span></th>
-                                    <th style="width:5%;">فلس<br /><span class="en">Fils</span></th>
-                                    <th style="width:13%;">توقيع صاحب العهدة/<br /><span class="en">custodian signature</span></th>
-                                    <th style="width:5%;">حذف</th>
+                                    <th>م</th>
+                                    <th>رمز الصنف/<br /><span class="en">Item code</span></th>
+                                    <th>اسم الصنف</th>
+                                    <th>الكمية/<br /><span class="en">Qty</span></th>
+                                    <th>الموديل/<br /><span class="en">Model No.</span></th>
+                                    <th>الرقم التسلسلي/<br /><span class="en">Serial No</span></th>
+                                    <th>السعر/<br /><span class="en">Price</span></th>
+                                    <th>فلس/<br /><span class="en">Fils</span></th>
+                                    <th>توقيع صاحب العهدة</th>
+                                    <th>حذف</th>
                                 </tr>
                             </thead>
                             <tbody id="itemsTableBody">
@@ -831,29 +1040,32 @@
                 </div>
             </div>
 
+            <!-- ===== الجانب الأيمن: الاستمارات المحفوظة ===== -->
             <div class="card">
                 <div class="card-title">
                     📂 الاستمارات المحفوظة
                     <span class="badge" id="savedCount">0</span>
                 </div>
 
-                <div style="display:flex; gap:10px; margin-bottom:15px; flex-wrap:wrap;">
-                    <input type="text" id="searchInput" placeholder="🔍 بحث برقم الاستمارة أو اسم المستلم..." style="flex:1; padding:8px 12px; border:2px solid #dce3ec; border-radius:8px; font-size:13px;" />
-                    <button class="btn btn-primary" id="searchBtn">🔍 بحث</button>
-                    <button class="btn btn-secondary" id="clearSearchBtn">✕ مسح</button>
+                <!-- ===== Search ===== -->
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="🔍 بحث برقم الاستمارة أو الاسم..." />
+                    <button class="btn btn-primary" id="searchBtn">بحث</button>
+                    <button class="btn btn-secondary" id="clearSearchBtn">مسح</button>
                 </div>
 
+                <!-- ===== Saved Forms Table ===== -->
                 <div class="saved-forms-container">
                     <table class="saved-forms-table">
                         <thead>
                             <tr>
-                                <th style="width:5%;">#</th>
-                                <th style="width:15%;">رقم الاستمارة</th>
-                                <th style="width:20%;">اسم المستلم</th>
-                                <th style="width:15%;">الجهة</th>
-                                <th style="width:10%;">عدد الأصناف</th>
-                                <th style="width:15%;">التاريخ</th>
-                                <th style="width:20%;">الإجراءات</th>
+                                <th>#</th>
+                                <th>رقم الاستمارة</th>
+                                <th>اسم المستلم</th>
+                                <th>الجهة</th>
+                                <th>عدد الأصناف</th>
+                                <th>التاريخ</th>
+                                <th>الإجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="savedFormsBody">
@@ -864,27 +1076,28 @@
                     </table>
                 </div>
 
-                <div style="margin-top:15px;">
-                    <label style="font-weight:600;color:#1a2639;font-size:14px;display:block;margin-bottom:8px;">
+                <!-- ===== Upload ===== -->
+                <div style="margin-top:10px;">
+                    <label style="font-weight:600;color:#1a2639;font-size:11px;display:block;margin-bottom:4px;">
                         📤 استيراد بيانات من Excel
                     </label>
                     <div class="upload-area" id="uploadCustodian">
                         <span class="upload-icon">📤</span>
                         <div class="upload-text">اضغط لرفع ملف Excel</div>
-                        <div style="font-size:11px;color:#999;margin-top:4px;">.xlsx, .xls</div>
+                        <div style="font-size:9px;color:#999;margin-top:2px;">.xlsx, .xls</div>
                         <input type="file" id="custodianFile" accept=".xlsx,.xls" />
                     </div>
                     <div class="upload-status" id="custodianFileStatus"></div>
                 </div>
 
-                <div style="margin-top:10px;">
-                    <label style="font-weight:600;color:#1a2639;font-size:14px;display:block;margin-bottom:8px;">
+                <div style="margin-top:6px;">
+                    <label style="font-weight:600;color:#1a2639;font-size:11px;display:block;margin-bottom:4px;">
                         📦 كتالوج الأصناف
                     </label>
                     <div class="upload-area" id="uploadItems">
                         <span class="upload-icon">📤</span>
                         <div class="upload-text">اضغط لرفع ملف Excel</div>
-                        <div style="font-size:11px;color:#999;margin-top:4px;">.xlsx, .xls</div>
+                        <div style="font-size:9px;color:#999;margin-top:2px;">.xlsx, .xls</div>
                         <input type="file" id="itemsFile" accept=".xlsx,.xls" />
                     </div>
                     <div class="upload-status" id="itemsFileStatus"></div>
@@ -893,16 +1106,18 @@
         </div>
     </div>
 
+    <!-- ===== نافذة المعاينة ===== -->
     <div class="preview-overlay" id="previewOverlay">
         <div class="preview-content">
             <button class="close-preview" id="closePreview">✕ إغلاق</button>
             <div id="previewFormContainer" class="form-preview-container"></div>
-            <div style="text-align:center;margin-top:15px;direction:ltr;">
-                <button onclick="window.print()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:8px;margin:0 5px;">🖨️ طباعة</button>
+            <div style="text-align:center;margin-top:8px;direction:ltr;" class="no-print">
+                <button onclick="window.print()" style="padding:5px 18px;font-size:12px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:5px;margin:0 3px;">🖨️ طباعة</button>
             </div>
         </div>
     </div>
 
+    <!-- ===== Toast ===== -->
     <div class="toast" id="toast"></div>
 
     <script>
@@ -934,6 +1149,7 @@
             const lastScanned = document.getElementById('lastScanned');
 
             const saveFormBtn = document.getElementById('saveFormBtn');
+            const exportWordBtn = document.getElementById('exportWordBtn');
             const exportPdfBtn = document.getElementById('exportPdfBtn');
             const previewFormBtn = document.getElementById('previewFormBtn');
             const clearFormBtn = document.getElementById('clearFormBtn');
@@ -960,7 +1176,7 @@
             let itemsCatalog = [];
             let savedForms = [];
             const ROWS_PER_PAGE = 5;
-            const STORAGE_KEY = 'CUSTODY_FORMS';
+            const STORAGE_KEY = 'CUSTODY_FORMS_MOBILE_V2';
 
             // ===== Toast =====
             function showToast(message, type = 'success') {
@@ -970,7 +1186,7 @@
                 clearTimeout(toast._timeout);
                 toast._timeout = setTimeout(() => {
                     toast.classList.remove('show');
-                }, 4000);
+                }, 3000);
             }
 
             // ===== تعيين الحالة =====
@@ -1276,6 +1492,7 @@
                 previewFormContainer.innerHTML = htmlContent;
                 previewOverlay.classList.add('active');
                 document.body.style.overflow = 'hidden';
+                previewOverlay.scrollTop = 0;
             }
 
             // =============================================
@@ -1295,44 +1512,58 @@
                         <html dir="rtl">
                         <head>
                             <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <title>استمارة عهدة - ${formData.id}</title>
                             <style>
                                 * { margin: 0; padding: 0; box-sizing: border-box; }
                                 body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 0; background: white; direction: rtl; }
-                                .form-page { width: 210mm; min-height: 297mm; padding: 8mm 6mm; margin: 0 auto; page-break-after: always; display: flex; flex-direction: column; background: white; }
+                                .form-page {
+                                    width: 210mm;
+                                    min-height: 297mm;
+                                    padding: 8mm 6mm;
+                                    margin: 0 auto;
+                                    page-break-after: always;
+                                    display: flex;
+                                    flex-direction: column;
+                                    background: white;
+                                }
                                 .form-page:last-child { page-break-after: avoid; }
                                 .page-header { flex-shrink: 0; }
                                 .page-body { flex: 1; overflow: visible; }
                                 .page-footer { flex-shrink: 0; margin-top: auto; }
-                                .form-id { text-align: left; font-size: 15px; color: #333; margin-bottom: 4px; font-weight: 600; font-family: 'Courier New', monospace; }
-                                .form-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 14px; border-bottom: 3px solid #1a2639; padding-bottom: 10px; }
-                                .form-title .en { font-weight: 400; font-size: 18px; color: #555; }
-                                table { width: 100%; border-collapse: collapse; margin: 0; }
-                                td, th { border: 2px solid #000; padding: 5px 7px; text-align: center; vertical-align: middle; }
-                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 12px; white-space: nowrap; padding: 4px 6px; }
-                                .data-cell { text-align: center; font-size: 12px; padding: 4px 6px; font-weight: 500; }
+                                .form-id { text-align: left; font-size: 14px; color: #333; margin-bottom: 4px; font-weight: 600; font-family: 'Courier New', monospace; }
+                                .form-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 10px; border-bottom: 2px solid #1a2639; padding-bottom: 8px; }
+                                .form-title .en { font-weight: 400; font-size: 16px; color: #555; }
+                                table { width: 100%; border-collapse: collapse; margin: 0; font-size: 11px; }
+                                td, th { border: 1.5px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; }
+                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 11px; white-space: nowrap; padding: 4px 6px; }
+                                .data-cell { text-align: center; font-size: 11px; padding: 4px 6px; font-weight: 500; }
                                 .en-text { font-weight: 400; color: #666; font-size: 9px; }
-                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 11px; padding: 4px 6px; border: 2px solid #000; }
-                                .items-table td { font-size: 11px; padding: 4px 6px; border: 2px solid #000; font-weight: 500; }
-                                .signature-cell { height: 70px; vertical-align: middle; padding: 5px 6px; font-size: 11px; border: 2px solid #000; }
+                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 10px; padding: 4px 6px; border: 1.5px solid #000; }
+                                .items-table td { font-size: 10px; padding: 4px 6px; border: 1.5px solid #000; font-weight: 500; }
+                                .signature-cell { height: 70px; vertical-align: middle; padding: 5px 6px; font-size: 11px; border: 1.5px solid #000; }
                                 .signature-cell strong { font-size: 12px; display: block; margin-bottom: 2px; }
                                 .signature-cell .sig-line-en { font-size: 9px; color: #888; display: block; margin-bottom: 1px; }
                                 .sig-row { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 3px; font-size: 11px; color: #333; }
                                 .sig-row .label-text { white-space: nowrap; font-weight: 500; font-size: 11px; min-width: 75px; text-align: right; }
-                                .sig-dotted-short { display: inline-block; min-width: 90px; border-bottom: 2px dotted #999; padding: 0 3px; min-height: 18px; flex: 1; }
+                                .sig-dotted-short { display: inline-block; min-width: 90px; border-bottom: 1.5px dotted #999; padding: 0 3px; min-height: 18px; flex: 1; }
                                 .custody-type { font-weight: 700; color: #1a2639; }
                                 .table-gap { margin-top: 6px; }
                                 .table-gap-bottom { margin-top: 8px; }
-                                @media print { .form-page { margin: 0; page-break-after: always; width: 100%; min-height: 100vh; } .form-page:last-child { page-break-after: avoid; } .no-print { display: none !important; } }
+                                @media print {
+                                    .form-page { margin: 0; page-break-after: always; width: 100%; min-height: 100vh; }
+                                    .form-page:last-child { page-break-after: avoid; }
+                                    .no-print { display: none !important; }
+                                }
                             </style>
                         </head>
                         <body>
                             <div class="form-preview-container" style="padding:0;">
                                 ${htmlContent}
                             </div>
-                            <div class="no-print" style="text-align:center;margin-top:15px;direction:ltr;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a2639;padding:10px 20px;border-radius:10px;z-index:999;">
-                                <button onclick="window.print()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:8px;margin:0 5px;">🖨️ طباعة</button>
-                                <button onclick="window.close()" style="padding:8px 25px;font-size:14px;cursor:pointer;border:none;background:#dc3545;color:white;border-radius:8px;margin:0 5px;">✕ إغلاق</button>
+                            <div class="no-print" style="text-align:center;margin-top:10px;direction:ltr;position:fixed;bottom:10px;left:50%;transform:translateX(-50%);background:#1a2639;padding:6px 12px;border-radius:6px;z-index:999;">
+                                <button onclick="window.print()" style="padding:4px 16px;font-size:11px;cursor:pointer;border:none;background:#3b7cff;color:white;border-radius:4px;margin:0 3px;">🖨️ طباعة</button>
+                                <button onclick="window.close()" style="padding:4px 16px;font-size:11px;cursor:pointer;border:none;background:#dc3545;color:white;border-radius:4px;margin:0 3px;">✕ إغلاق</button>
                             </div>
                         </body>
                         </html>
@@ -1344,6 +1575,96 @@
                 setTimeout(() => {
                     printWindow.print();
                 }, 600);
+            }
+
+            // =============================================
+            // ===== تصدير Word =====
+            // =============================================
+
+            function exportWord(formData) {
+                if (items.length === 0) {
+                    showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
+                    return;
+                }
+
+                const data = formData || {
+                    id: formId.value || generateFormId(),
+                    custodianName: custodianName.value || '',
+                    department: department.value || '',
+                    jobTitle: jobTitle.value || '',
+                    building: building.value || '',
+                    room: room.value || '',
+                    floor: floor.value || '',
+                    issueDate: issueDate.value || '',
+                    empNumber: empNumber.value || '',
+                    civilId: civilId.value || '',
+                    custodyType: custodyType.value || 'تنظيمية',
+                    phoneNo: phoneNo.value || '',
+                    items: JSON.parse(JSON.stringify(items))
+                };
+
+                const htmlContent = generateFormHTML(data);
+                const fullHtml = `
+                        <!DOCTYPE html>
+                        <html dir="rtl">
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>استمارة عهدة - ${data.id}</title>
+                            <style>
+                                * { margin: 0; padding: 0; box-sizing: border-box; }
+                                body { font-family: 'Arial', 'Segoe UI', sans-serif; padding: 0; background: white; direction: rtl; }
+                                .form-page {
+                                    width: 210mm;
+                                    min-height: 297mm;
+                                    padding: 8mm 6mm;
+                                    margin: 0 auto;
+                                    page-break-after: always;
+                                    display: flex;
+                                    flex-direction: column;
+                                    background: white;
+                                }
+                                .form-page:last-child { page-break-after: avoid; }
+                                .page-header { flex-shrink: 0; }
+                                .page-body { flex: 1; overflow: visible; }
+                                .page-footer { flex-shrink: 0; margin-top: auto; }
+                                .form-id { text-align: left; font-size: 14px; color: #333; margin-bottom: 4px; font-weight: 600; font-family: 'Courier New', monospace; }
+                                .form-title { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 10px; border-bottom: 2px solid #1a2639; padding-bottom: 8px; }
+                                .form-title .en { font-weight: 400; font-size: 16px; color: #555; }
+                                table { width: 100%; border-collapse: collapse; margin: 0; font-size: 11px; }
+                                td, th { border: 1.5px solid #000; padding: 4px 6px; text-align: center; vertical-align: middle; }
+                                .label-cell { font-weight: 700; background: #f5f5f5; text-align: center; font-size: 11px; white-space: nowrap; padding: 4px 6px; }
+                                .data-cell { text-align: center; font-size: 11px; padding: 4px 6px; font-weight: 500; }
+                                .en-text { font-weight: 400; color: #666; font-size: 9px; }
+                                .items-table th { background: #f5f5f5; font-weight: 700; font-size: 10px; padding: 4px 6px; border: 1.5px solid #000; }
+                                .items-table td { font-size: 10px; padding: 4px 6px; border: 1.5px solid #000; font-weight: 500; }
+                                .signature-cell { height: 70px; vertical-align: middle; padding: 5px 6px; font-size: 11px; border: 1.5px solid #000; }
+                                .signature-cell strong { font-size: 12px; display: block; margin-bottom: 2px; }
+                                .signature-cell .sig-line-en { font-size: 9px; color: #888; display: block; margin-bottom: 1px; }
+                                .sig-row { display: flex; justify-content: center; align-items: center; gap: 4px; margin-top: 3px; font-size: 11px; color: #333; }
+                                .sig-row .label-text { white-space: nowrap; font-weight: 500; font-size: 11px; min-width: 75px; text-align: right; }
+                                .sig-dotted-short { display: inline-block; min-width: 90px; border-bottom: 1.5px dotted #999; padding: 0 3px; min-height: 18px; flex: 1; }
+                                .custody-type { font-weight: 700; color: #1a2639; }
+                                .table-gap { margin-top: 6px; }
+                                .table-gap-bottom { margin-top: 8px; }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="form-preview-container" style="padding:0;">
+                                ${htmlContent}
+                            </div>
+                        </body>
+                        </html>
+                    `;
+
+                const blob = new Blob([fullHtml], { type: 'application/msword;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `استمارة_عهدة_${data.id}.doc`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(link.href);
+                showToast('📄 تم تصدير ملف Word بنجاح', 'success');
             }
 
             // =============================================
@@ -1473,7 +1794,7 @@
 
                     if (pageItems.length === 0) {
                         itemsHtml =
-                            `<tr><td colspan="9" style="text-align:center;padding:15px;color:#999;">لا توجد أصناف</td></tr>`;
+                            `<tr><td colspan="9" style="text-align:center;padding:10px;color:#999;">لا توجد أصناف</td></tr>`;
                     } else {
                         pageItems.forEach((item, idx) => {
                             const globalIndex = startIndex + idx + 1;
@@ -1481,15 +1802,15 @@
                             const filsVal = item.fils || '000';
                             itemsHtml += `
                                     <tr>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${globalIndex}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.itemCode || '5996-AU-0000007'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.itemName || '75 Standard Standing Kiosk Display'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">1</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.modelNo || 'RD75l-TV'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${item.serial || '-'}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${priceVal}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">${filsVal}</td>
-                                        <td style="padding:5px 6px;border:2px solid #000;text-align:center;font-size:12px;">.........................</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${globalIndex}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.itemCode || '5996-AU-0000007'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.itemName || '75 Standard Standing Kiosk Display'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">1</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.modelNo || 'RD75l-TV'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${item.serial || '-'}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${priceVal}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">${filsVal}</td>
+                                        <td style="padding:3px 4px;border:1.5px solid #000;text-align:center;font-size:10px;">.........................</td>
                                     </tr>
                                 `;
                         });
@@ -1622,7 +1943,7 @@
             }
 
             // =============================================
-            // ===== رفع Excel (تم الإصلاح) =====
+            // ===== رفع Excel =====
             // =============================================
 
             function readExcelFile(file, callback) {
@@ -1632,24 +1953,15 @@
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, { type: 'array' });
                         const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                        const jsonData = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+                        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
                         callback(jsonData);
                     } catch (err) {
-                        console.error('خطأ في قراءة الملف:', err);
-                        showToast('❌ خطأ في قراءة ملف Excel. تأكد من صيغة الملف.', 'error');
+                        console.error('خطأ:', err);
+                        showToast('❌ خطأ في قراءة ملف Excel', 'error');
                     }
-                };
-                reader.onerror = function() {
-                    showToast('❌ خطأ في قراءة الملف', 'error');
                 };
                 reader.readAsArrayBuffer(file);
             }
-
-            // عناصر المعاينة
-            const custodianPreview = document.createElement('div');
-            custodianPreview.id = 'custodianPreview';
-            const itemsPreview = document.createElement('div');
-            itemsPreview.id = 'itemsPreview';
 
             uploadCustodian.addEventListener('click', () => custodianFile.click());
 
@@ -1657,16 +1969,8 @@
                 const file = e.target.files[0];
                 if (!file) return;
 
-                // التحقق من صيغة الملف
-                const ext = file.name.split('.').pop().toLowerCase();
-                if (!['xlsx', 'xls'].includes(ext)) {
-                    showToast('⚠️ يرجى رفع ملف Excel بصيغة .xlsx أو .xls', 'warning');
-                    custodianFile.value = '';
-                    return;
-                }
-
                 readExcelFile(file, function(data) {
-                    if (data && data.length > 0) {
+                    if (data.length > 0) {
                         const row = data[0];
                         custodianName.value = row['اسم مستلم العهدة'] || row['Custodian Name'] || '';
                         department.value = row['الجهة'] || row['Department'] || '';
@@ -1692,8 +1996,6 @@
                         custodianFileStatus.textContent = `✅ تم رفع: ${file.name}`;
                         custodianFileStatus.style.color = '#0f973d';
                         showToast('✅ تم رفع بيانات صاحب العهدة', 'success');
-                    } else {
-                        showToast('⚠️ الملف فارغ أو لا يحتوي على بيانات', 'warning');
                     }
                 });
             });
@@ -1704,15 +2006,8 @@
                 const file = e.target.files[0];
                 if (!file) return;
 
-                const ext = file.name.split('.').pop().toLowerCase();
-                if (!['xlsx', 'xls'].includes(ext)) {
-                    showToast('⚠️ يرجى رفع ملف Excel بصيغة .xlsx أو .xls', 'warning');
-                    itemsFile.value = '';
-                    return;
-                }
-
                 readExcelFile(file, function(data) {
-                    if (data && data.length > 0) {
+                    if (data.length > 0) {
                         itemsCatalog = data.map(row => ({
                             itemCode: String(row['رمز الصنف'] || row['Item Code'] || row['الأوريكال'] || '')
                             .trim(),
@@ -1726,8 +2021,6 @@
                         itemsFileStatus.textContent = `✅ تم رفع: ${file.name} (${itemsCatalog.length} صنف)`;
                         itemsFileStatus.style.color = '#0f973d';
                         showToast(`✅ تم رفع ${itemsCatalog.length} صنف`, 'success');
-                    } else {
-                        showToast('⚠️ الملف فارغ أو لا يحتوي على بيانات', 'warning');
                     }
                 });
             });
@@ -1794,6 +2087,30 @@
 
             addItemBtn.addEventListener('click', addItem);
             saveFormBtn.addEventListener('click', saveForm);
+
+            exportWordBtn.addEventListener('click', function() {
+                if (items.length === 0) {
+                    showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
+                    return;
+                }
+                const formData = {
+                    id: formId.value || generateFormId(),
+                    custodianName: custodianName.value || '',
+                    department: department.value || '',
+                    jobTitle: jobTitle.value || '',
+                    building: building.value || '',
+                    room: room.value || '',
+                    floor: floor.value || '',
+                    issueDate: issueDate.value || '',
+                    empNumber: empNumber.value || '',
+                    civilId: civilId.value || '',
+                    custodyType: custodyType.value || 'تنظيمية',
+                    phoneNo: phoneNo.value || '',
+                    items: JSON.parse(JSON.stringify(items))
+                };
+                exportWord(formData);
+            });
+
             exportPdfBtn.addEventListener('click', () => {
                 if (items.length === 0) {
                     showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
@@ -1816,6 +2133,7 @@
                 };
                 printForm(formData);
             });
+
             previewFormBtn.addEventListener('click', () => {
                 if (items.length === 0) {
                     showToast('⚠️ يرجى إضافة صنف واحد على الأقل', 'warning');
@@ -1838,6 +2156,7 @@
                 };
                 viewForm(formData);
             });
+
             clearFormBtn.addEventListener('click', clearFormData);
 
             searchBtn.addEventListener('click', searchForms);
@@ -1896,7 +2215,7 @@
             setStatus('✅ جاهز - امسح الأوريكال', '#0f973d');
             showToast('✅ النظام جاهز', 'success');
 
-            console.log('✅ نظام استمارة العهدة جاهز - مع حفظ وبحث وعرض');
+            console.log('✅ نظام استمارة العهدة جاهز - مع تصدير Word و PDF');
         })();
     </script>
 
