@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>تسجيل الأوريكال والسريل</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8ecf1 0%, #d0d9e6 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 40px 35px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a2639;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h1 small {
+            font-size: 14px;
+            font-weight: 400;
+            color: #4a5b6e;
+            background: #eef2f7;
+            padding: 2px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.3px;
+        }
+
+        .subtitle {
+            color: #3d4f62;
+            font-size: 15px;
+            margin-bottom: 30px;
+            border-right: 4px solid #3b7cff;
+            padding-right: 16px;
+            background: rgba(59, 124, 255, 0.06);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .input-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 15px;
+            color: #1e2b3c;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-group label span {
+            color: #3b7cff;
+            margin-right: 4px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            font-size: 16px;
+            border: 2px solid #dce3ec;
+            border-radius: 18px;
+            background: #ffffff;
+            transition: all 0.25s ease;
+            color: #0b1a2b;
+            font-weight: 500;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #3b7cff;
+            box-shadow: 0 0 0 5px rgba(59, 124, 255, 0.15);
+            background: #ffffff;
+        }
+
+        .input-group input::placeholder {
+            color: #a0b2c7;
+            font-weight: 400;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 28px 0 20px;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 14px 18px;
+            border: none;
+            border-radius: 60px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: #eef2f7;
+            color: #1e2b3c;
+        }
+
+        .btn-primary {
+            background: #1a2639;
+            color: white;
+            box-shadow: 0 6px 14px rgba(26, 38, 57, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: #2b3b55;
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(26, 38, 57, 0.35);
+        }
+
+        .btn-secondary {
+            background: #eef2f7;
+            color: #1e2b3c;
+            border: 1px solid #d0d9e6;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            transform: scale(1.02);
+        }
+
+        .btn-success {
+            background: #0f973d;
+            color: white;
+            box-shadow: 0 6px 14px rgba(15, 151, 61, 0.25);
+        }
+
+        .btn-success:hover {
+            background: #0d7e32;
+            transform: scale(1.02);
+        }
+
+        .display-box {
+            background: #f0f4fc;
+            border-radius: 20px;
+            padding: 18px 22px;
+            margin-top: 16px;
+            border: 1px solid #dce3ec;
+        }
+
+        .display-box p {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            padding: 6px 0;
+            border-bottom: 1px dashed #c8d3e3;
+            margin: 0;
+        }
+
+        .display-box p:last-child {
+            border-bottom: none;
+        }
+
+        .display-box .label {
+            color: #3d5a78;
+            font-weight: 500;
+        }
+
+        .display-box .value {
+            font-weight: 700;
+            color: #0b1a2b;
+            background: white;
+            padding: 2px 16px;
+            border-radius: 40px;
+            font-size: 14px;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            border: 1px solid #dce3ec;
+        }
+
+        .display-box .empty-value {
+            color: #94a9c2;
+            font-weight: 400;
+            font-style: italic;
+        }
+
+        .storage-key-badge {
+            display: inline-block;
+            background: #1a2639;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 14px;
+            border-radius: 40px;
+            letter-spacing: 0.6px;
+            margin-top: 20px;
+            font-family: 'Courier New', monospace;
+            background: #2b3b55;
+        }
+
+        .footer-note {
+            font-size: 13px;
+            color: #5b6f86;
+            margin-top: 14px;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 28px 18px;
+            }
+            h1 {
+                font-size: 22px;
+                flex-wrap: wrap;
+            }
+            .btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+
+        <h1>
+            📋 تسجيل الجهاز
+            <small>GGLJWTP</small>
+        </h1>
+        <div class="subtitle">
+            يتم تخزين البيانات محلياً في <strong>LocalStorage</strong> تحت المفتاح <code>GGLJWTP</code>
+        </div>
+
+        <!-- حقل رقم الأوريكال -->
+        <div class="input-group">
+            <label for="oricalInput">🔑 رقم الأوريكال <span>*</span></label>
+            <input
+            type="text"
+            id="oricalInput"
+            placeholder="مثال: OR-12345-ABCD"
+            autocomplete="off"
+            />
+        </div>
+
+        <!-- حقل رقم السريل -->
+        <div class="input-group">
+            <label for="serialInput">📟 رقم السريل (Serial) <span>*</span></label>
+            <input
+            type="text"
+            id="serialInput"
+            placeholder="مثال: SN-9876-XYZ"
+            autocomplete="off"
+            />
+        </div>
+
+        <!-- الأزرار -->
+        <div class="actions">
+            <button class="btn btn-primary" id="saveBtn">💾 حفظ</button>
+            <button class="btn btn-secondary" id="loadBtn">📂 تحميل</button>
+            <button class="btn btn-secondary" id="clearBtn">🗑️ مسح</button>
+        </div>
+
+        <!-- عرض القيم المخزنة -->
+        <div class="display-box" id="displayBox">
+            <p>
+                <span class="label">📌 الأوريكال</span>
+                <span class="value empty-value" id="displayOrical">—</span>
+            </p>
+            <p>
+                <span class="label">📌 السريل</span>
+                <span class="value empty-value" id="displaySerial">—</span>
+            </p>
+        </div>
+
+        <!-- مؤشر المفتاح المستخدم -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <span class="storage-key-badge">🗝️ KEY: GGLJWTP</span>
+            <span style="font-size: 13px; color: #4a5b6e;" id="statusMsg">🟢 جاهز</span>
+        </div>
+
+        <div class="footer-note">
+            ⚡ البيانات تُحفظ في متصفحك فقط · تستخدم LocalStorage
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // --- المفتاح الثابت المطلوب ---
+            const STORAGE_KEY = 'GGLJWTP';
+
+            // --- عناصر DOM ---
+            const oricalInput = document.getElementById('oricalInput');
+            const serialInput = document.getElementById('serialInput');
+            const displayOrical = document.getElementById('displayOrical');
+            const displaySerial = document.getElementById('displaySerial');
+            const statusMsg = document.getElementById('statusMsg');
+
+            const saveBtn = document.getElementById('saveBtn');
+            const loadBtn = document.getElementById('loadBtn');
+            const clearBtn = document.getElementById('clearBtn');
+
+            // --- دوال مساعدة ---
+
+            // تحديث واجهة العرض من الـ LocalStorage
+            function updateDisplayFromStorage() {
+                try {
+                    const storedData = localStorage.getItem(STORAGE_KEY);
+                    if (storedData) {
+                        const parsed = JSON.parse(storedData);
+                        // نتأكد من وجود الخصائص
+                        const oricalVal = (parsed.orical !== undefined && parsed.orical !== null) ? parsed.orical : '';
+                        const serialVal = (parsed.serial !== undefined && parsed.serial !== null) ? parsed.serial : '';
+
+                        // عرض في حقلي العرض
+                        displayOrical.textContent = oricalVal || '—';
+                        displaySerial.textContent = serialVal || '—';
+
+                        // إذا كانت القيم موجودة نغير الكلاس
+                        displayOrical.className = 'value' + (oricalVal ? '' : ' empty-value');
+                        displaySerial.className = 'value' + (serialVal ? '' : ' empty-value');
+
+                        // ملء الحقول أيضاً لتكون متطابقة
+                        oricalInput.value = oricalVal;
+                        serialInput.value = serialVal;
+
+                        statusMsg.textContent = '✅ تم التحميل';
+                        statusMsg.style.color = '#0f973d';
+                    } else {
+                        // لا توجد بيانات
+                        displayOrical.textContent = '—';
+                        displaySerial.textContent = '—';
+                        displayOrical.className = 'value empty-value';
+                        displaySerial.className = 'value empty-value';
+                        // لا نمسح حقول الإدخال تلقائياً حتى لا نفقد ما كتبه المستخدم
+                        statusMsg.textContent = '📭 لا توجد بيانات مخزنة';
+                        statusMsg.style.color = '#b8860b';
+                    }
+                } catch (e) {
+                    console.warn('خطأ في قراءة LocalStorage:', e);
+                    statusMsg.textContent = '⚠️ خطأ في القراءة';
+                    statusMsg.style.color = '#b22222';
+                }
+            }
+
+            // حفظ البيانات من الحقول إلى LocalStorage
+            function saveDataToStorage() {
+                const oricalVal = oricalInput.value.trim();
+                const serialVal = serialInput.value.trim();
+
+                // نسمح بحفظ قيم فارغة (المستخدم قد يريد مسح حقل معين)
+                // لكن نعطي تنبيه إذا كان كلاهما فارغين (اختياري)
+                if (oricalVal === '' && serialVal === '') {
+                    // نعطي تحذير لكن نكمل (يمكن أن يريد مسح كل شيء)
+                    if (!confirm('⚠️ كلا الحقلين فارغان. هل تريد حفظ بيانات فارغة؟')) {
+                        return;
+                    }
+                }
+
+                const dataToStore = {
+                    orical: oricalVal,
+                    serial: serialVal
+                };
+
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
+                    // تحديث العرض
+                    updateDisplayFromStorage();
+                    statusMsg.textContent = '💾 تم الحفظ بنجاح';
+                    statusMsg.style.color = '#0f973d';
+
+                    // إظهار رسالة منبثقة بسيطة (اختياري)
+                    // يمكنك إزالتها إذا أردت
+                    // alert('✅ تم حفظ البيانات في LocalStorage تحت مفتاح GGLJWTP');
+                } catch (e) {
+                    console.error('فشل الحفظ في LocalStorage:', e);
+                    statusMsg.textContent = '❌ فشل الحفظ';
+                    statusMsg.style.color = '#b22222';
+                    alert('حدث خطأ أثناء الحفظ. تأكد من أن المتصفح يسمح بالتخزين المحلي.');
+                }
+            }
+
+            // مسح البيانات من LocalStorage وحقول الإدخال والعرض
+            function clearAllData() {
+                if (!confirm('🗑️ هل أنت متأكد من مسح جميع البيانات المخزنة؟')) {
+                    return;
+                }
+
+                try {
+                    localStorage.removeItem(STORAGE_KEY);
+                    // تفريغ الحقول
+                    oricalInput.value = '';
+                    serialInput.value = '';
+                    // تحديث العرض
+                    updateDisplayFromStorage();
+                    statusMsg.textContent = '🗑️ تم المسح';
+                    statusMsg.style.color = '#b8860b';
+                } catch (e) {
+                    console.error('فشل المسح:', e);
+                    statusMsg.textContent = '❌ فشل المسح';
+                    statusMsg.style.color = '#b22222';
+                }
+            }
+
+            // --- ربط الأحداث ---
+
+            // حفظ
+            saveBtn.addEventListener('click', saveDataToStorage);
+
+            // تحميل (يعيد قراءة البيانات من التخزين ويعرضها)
+            loadBtn.addEventListener('click', function() {
+                updateDisplayFromStorage();
+                statusMsg.textContent = '🔄 تم التحميل';
+                statusMsg.style.color = '#1a2639';
+            });
+
+            // مسح
+            clearBtn.addEventListener('click', clearAllData);
+
+            // (اختياري) حفظ عند الضغط على Enter في أي حقل
+            oricalInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveDataToStorage();
+                }
+            });
+            serialInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveDataToStorage();
+                }
+            });
+
+            // --- تهيئة الصفحة: تحميل البيانات المخزنة إن وجدت ---
+            updateDisplayFromStorage();
+
+            // إضافة رسالة ترحيب في الـ status
+            // لكننا نتركها كما هي من updateDisplayFromStorage
+
+            console.log('✅ صفحة GGLJWTP جاهزة — LocalStorage مفتاح:', STORAGE_KEY);
+
+        })();
+    </script>
+
+</body>
+</html>
