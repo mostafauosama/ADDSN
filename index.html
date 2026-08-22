@@ -395,6 +395,12 @@
         .saved-forms-table .action-btn.delete-btn {
             background: #dc3545;
         }
+        .saved-forms-table .action-btn.export-btn {
+            background: #28a745;
+        }
+        .saved-forms-table .action-btn.export-btn:hover {
+            background: #1e7e34;
+        }
         .saved-forms-table .action-btn:hover {
             opacity: 0.8;
         }
@@ -1052,6 +1058,7 @@
                     <input type="text" id="searchInput" placeholder="🔍 بحث برقم الاستمارة أو الاسم..." />
                     <button class="btn btn-primary" id="searchBtn">بحث</button>
                     <button class="btn btn-secondary" id="clearSearchBtn">مسح</button>
+                    <button class="btn btn-success" id="exportAllExcelBtn">📊 تصدير الكل Excel</button>
                 </div>
 
                 <!-- ===== Saved Forms Table ===== -->
@@ -1170,6 +1177,9 @@
             const itemsFileStatus = document.getElementById('itemsFileStatus');
             const uploadCustodian = document.getElementById('uploadCustodian');
             const uploadItems = document.getElementById('uploadItems');
+
+            // زر التصدير Excel
+            const exportAllExcelBtn = document.getElementById('exportAllExcelBtn');
 
             // ===== المتغيرات =====
             let items = [];
@@ -1869,6 +1879,66 @@
             }
 
             // =============================================
+            // ===== تصدير إلى Excel (جديد) =====
+            // =============================================
+
+            function exportFormsToExcel(forms, filename = 'استمارات_العهدة.xlsx') {
+                if (!forms || forms.length === 0) {
+                    showToast('⚠️ لا توجد استمارات للتصدير', 'warning');
+                    return;
+                }
+
+                const rows = [];
+                // رأس الأعمدة
+                const headers = [
+                    'رقم الاستمارة', 'اسم المستلم', 'الجهة', 'المسمى الوظيفي', 'المبنى', 'الغرفة', 'الدور',
+                    'التاريخ', 'الرقم الوظيفي', 'الرقم المدني', 'نوع العهدة', 'رقم التليفون',
+                    'رمز الصنف', 'اسم الصنف', 'الموديل', 'الرقم التسلسلي', 'السعر', 'فلس'
+                ];
+                rows.push(headers);
+
+                forms.forEach(form => {
+                    const itemsList = form.items || [];
+                    if (itemsList.length === 0) {
+                        // استمارة بدون أصناف – نضيف صفاً واحداً
+                        rows.push([
+                            form.id || '', form.custodianName || '', form.department || '',
+                            form.jobTitle || '', form.building || '', form.room || '', form.floor || '',
+                            form.issueDate || '', form.empNumber || '', form.civilId || '',
+                            form.custodyType || '', form.phoneNo || '',
+                            '', '', '', '', '', ''
+                        ]);
+                    } else {
+                        itemsList.forEach(item => {
+                            rows.push([
+                                form.id || '', form.custodianName || '', form.department || '',
+                                form.jobTitle || '', form.building || '', form.room || '', form.floor || '',
+                                form.issueDate || '', form.empNumber || '', form.civilId || '',
+                                form.custodyType || '', form.phoneNo || '',
+                                item.itemCode || '', item.itemName || '', item.modelNo || '',
+                                item.serial || '', item.price || '', item.fils || ''
+                            ]);
+                        });
+                    }
+                });
+
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'استمارات');
+                XLSX.writeFile(wb, filename);
+                showToast(`✅ تم تصدير ${forms.length} استمارة إلى Excel`, 'success');
+            }
+
+            function exportSingleForm(id) {
+                const form = savedForms.find(f => f.id === id);
+                if (!form) {
+                    showToast('⚠️ الاستمارة غير موجودة', 'error');
+                    return;
+                }
+                exportFormsToExcel([form], `استمارة_عهدة_${id}.xlsx`);
+            }
+
+            // =============================================
             // ===== عرض الاستمارات المحفوظة =====
             // =============================================
 
@@ -1907,6 +1977,7 @@
                                 <td>
                                     <button class="action-btn view-btn" onclick="window.viewSavedForm('${form.id}')">👁️</button>
                                     <button class="action-btn print-btn" onclick="window.printSavedForm('${form.id}')">🖨️</button>
+                                    <button class="action-btn export-btn" onclick="window.exportSingleForm('${form.id}')">📤</button>
                                     <button class="action-btn delete-btn" onclick="window.deleteSavedForm('${form.id}')">✕</button>
                                 </td>
                             </tr>
@@ -2043,6 +2114,8 @@
                 deleteForm(id);
             };
 
+            window.exportSingleForm = exportSingleForm;
+
             // =============================================
             // ===== مسح بيانات النموذج =====
             // =============================================
@@ -2177,6 +2250,15 @@
                 }
             });
 
+            // ===== زر تصدير الكل Excel =====
+            exportAllExcelBtn.addEventListener('click', function() {
+                if (savedForms.length === 0) {
+                    showToast('⚠️ لا توجد استمارات محفوظة', 'warning');
+                    return;
+                }
+                exportFormsToExcel(savedForms);
+            });
+
             // Enter على الأوريكال
             itemCodeInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -2215,7 +2297,7 @@
             setStatus('✅ جاهز - امسح الأوريكال', '#0f973d');
             showToast('✅ النظام جاهز', 'success');
 
-            console.log('✅ نظام استمارة العهدة جاهز - بدون قيم افتراضية');
+            console.log('✅ نظام استمارة العهدة جاهز مع إمكانية تصدير Excel');
         })();
     </script>
 
